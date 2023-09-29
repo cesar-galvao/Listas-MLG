@@ -1,0 +1,69 @@
+---
+title: "Lista 2"
+subtitle: "Modelos Lineares Generalizados - 2/2023" 
+author:
+  - César Augusto Galvão - 19/0011572
+  - Laiza Mendes - 20/0067028
+format: 
+  pdf:
+    toc: true
+    toc-depth: 2
+    keep-tex: true
+    include-in-header:
+      text: |
+        \usepackage[auth-lg]{authblk}
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+{{< pagebreak >}}
+
+# Questão 1
+
+```{r pacotes}
+if(!("pacman" %in% installed.packages())){install.packages("pacman")}
+
+#pacman::p_load(Mcomp, tidyverse, forecast, fpp2, xts, tseries, tidymodels, kableExtra)
+
+# #funcao not in para facilitar filtragens
+# `%notin%` <- Negate(`%in%`)
+```
+
+```{r EXEMPLO-TABELA}
+# kpss.test(E) %>% 
+#   tidy()%>%
+#   select(method, statistic, `p.value`) %>%
+#   knitr::kable(
+#     format = "latex",
+#     align = c("lccc"),
+#     booktabs = TRUE,
+#     longtable = TRUE,
+#     linesep = "",
+#     escape = FALSE,
+#     digits = 2,
+#     col.names = c("", "Estatística", "p-valor")
+#     ) %>%
+#   kableExtra::kable_styling(
+#       position = "center",
+#       latex_options = c("striped", "repeat_header"),
+#       stripe_color = "gray!15")
+```
+
+
+# Apêndice
+
+Todo o projeto de composição deste documento pode ser encontrado aqui: <https://github.com/cesar-galvao/mlg>
+
+```{r codigo, eval = FALSE, echo = TRUE}
+
+
+
+```
+
+```{r include = FALSE}
+rm(list = ls())
+gc()
+
+```
