@@ -130,7 +130,8 @@ fit_depressao %>%
     linesep = "",
     escape = FALSE,
     digits = 3,
-    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor")
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear para tratamentos sem interação com idade sobre eficácia"
     ) %>%
   kableExtra::kable_styling(
       position = "center",
@@ -149,9 +150,33 @@ Ou seja, se considerarmos independentemente idade, tratamento A e tratamento B, 
 É possível considerar que um tamanho de amostra pequeno tenha grande influência sobre a significância de $H_0: \beta_3 = 0$ do modelo. No entanto, trata-se de um fenômeno para o qual o tratamento pode estar estreitamente associado à idade, caso em que teríamos que considerar o modelo (\ref{modelo_dummy}) por completo.
 
 
-## b) Obtenha a tabela ANOVA para o modelo obtido no item (a) e interprete os resultado
+## b) Obtenha a tabela ANOVA para o modelo obtido no item (a) e interprete os resultados
 
+Se montarmos uma tabela de Análise de Variância para o modelo de regressão linear ajustado, obtemos os resultados a seguir:
 
+```{r anova-fit-depressao}
+anova(fit_depressao) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Fonte de Var.","g.l.", "SQ" , "QM", "F", "p-valor"),
+    caption = "Tabela ANOVA para o modelo linear sem interações"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+Nota-se que a maioria da variância explicada pelo modelo está associada à variável idade, enquanto a soma de quadrados das variáveis de tratamento juntas não superam a soma de quadrados dos resíduos.
+
+Se conjugarmos os resultados deste item com os do item a) vemos que isoladamente apenas idade, e interessantemente apenas o tratamento A, parecem ser variáveis que realmente contribuem para a explicação do fenômeno. 
 
 ## c) Considere a possibilidade de incluir a interação entre as varáveis independentes
 
@@ -241,9 +266,83 @@ A partir do modelo (\ref{modelo_dummy}), construimos todos os possíveis submode
 
 ### ii) Interpretação de coeficientes de regressão de fatores de interação
 
+Agora experimentamos ajustar exatamente o modelo (\ref{modelo_dummy}) e, conforme suspeitas, verificamos que não apenas agora o coeficiente $\beta_3$, correspondente ao tratamento B, é significativamente diferente de zero, como a interação dos tratamentos também o é.
+
+```{r modelo-interacao}
+#modelo aditivo (.) + interações específicas'
+fit_depressao_intera <- lm(eficacia ~ (.) + idade*A + idade*B, data = dados_dummy)
+
+fit_depressao_intera %>%
+  summary() %>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear para tratamentos com interação com idade sobre eficácia"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+
+```
+
+Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que a linha de base dos tratamentos está bem diferente  com efeitos $C<B<A$, com uma grande diferença entre o primeiro e último tratamento.
+
+O efeito da interação entre idade e tratamentos pode ser melhor explicada se analisarmos graficamente primeiro. A figura a seguir ilustra as curvas de regressão para cada tratamento.
+
+
+```{r, fig.align='center', fig.cap= "Curvas de regressão para modelo com interações."}
+ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(y = "Eficácia", x = "Idade", color = "Tratamento")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+```
+
+Cabe recapitularmos que o grupo de referência é o tratamento C, o que força a interpretação de que o intercepto $\beta_0$ do modelo é o seu efeito de tratamento isolado e $\beta_1 \, x_{1i}$ se refere à interação entre o tratamento C e a variável idade. 
+
+Enquanto este coeficiente, do grupo de referência, é positivo e muito próximo a $1$, os demais são negativos. No entanto, isto não significa que suas retas têm coeficiente angular negativo. O sentido e magnitude desses estimadores indica quanto a inclinação das demais retas está deslocada no sentido horário em relação à referência. Pela tabela, notamos que $\beta_1 > \beta_4 > \beta_5$. Analogamente, se $\theta_j, j = A, B, C$ for o ângulo da curva de regressão em relação às abscissas, notamos que $\theta_C > \theta_B > \theta_A$.
+
+Em termos reais, o modelo sugere que há uma grande influência da idade sobre a eficácia do tratamento C, enquanto essa influência é menor para o tratamento B e menor ainda para o tratamento A.
+
+
 ### iii) tabela ANOVA
 
+descrever tabela anova
+
+```{r anova-modelo-interacoes}
+anova(fit_depressao_intera) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Fonte de Var.","g.l.", "SQ" , "QM", "F", "p-valor"),
+    caption = "Tabela ANOVA para o modelo linear com interações"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+
 ### iv) Análise completa dos resíduos do modelo
+
+
 
 # Apêndice
 

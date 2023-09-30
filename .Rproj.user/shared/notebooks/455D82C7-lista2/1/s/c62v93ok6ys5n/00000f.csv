@@ -1,5 +1,0 @@
-"0","dados <- read.csv(""dados lista 2/Q02_data.txt"", sep = '/t')
-"
-"2","Error in scan(file, what = """", sep = sep, quote = quote, nlines = 1, quiet = TRUE,  : 
-  valor de 'sep' inválido: deve ter um byte
-"
