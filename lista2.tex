@@ -177,7 +177,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, sharp corners, boxrule=0pt, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable, frame hidden]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, sharp corners, frame hidden, interior hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, breakable]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -258,6 +258,24 @@ eficacia & idade & tratamento\\
 \subsection{a) Ajuste um modelo de regressão linear e interprete os
 resultados
 obtidos}\label{a-ajuste-um-modelo-de-regressuxe3o-linear-e-interprete-os-resultados-obtidos}}
+
+Inicialmente, consideremos apenas um gráfico de dispersão entre a
+variável resposta e a única variável numérica, Idade. É possível notar
+uma relação que pode ou não ser linear, mas também há indícios de
+heteroscedasticidade. As demais variáveis são dicotômicas, então não há
+necessidade de se montar dispersões para elas.
+
+Além disso, se segregamos a dispersão por grupos de tratamento, notamos
+que pode ser preferível um modelo que considere comportamentos de cada
+grupo separadamente.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/scatter-variaveis-1.pdf}
+
+}
+
+\end{figure}
 
 Temos um potencial modelo de regressão linear que pode ou não conter
 interações entre as variáveis, o qual pode ser expresso em sua forma
@@ -366,8 +384,6 @@ fenômeno.
 \subsection{c) Considere a possibilidade de incluir a interação entre as
 varáveis
 independentes}\label{c-considere-a-possibilidade-de-incluir-a-interauxe7uxe3o-entre-as-varuxe1veis-independentes}}
-
-Supõe-se que \(\varepsilon_i \sim N(0, \sigma^2)\).
 
 \hypertarget{i-lista-de-todos-os-submodelos-possuxedveis}{%
 \subsubsection{i) Lista de todos os submodelos
@@ -526,7 +542,15 @@ sobre a eficácia do tratamento C, enquanto essa influência é menor para
 o tratamento B e menor ainda para o tratamento A.
 
 \hypertarget{iii-tabela-anova}{%
-\subsubsection{iii) tabela ANOVA}\label{iii-tabela-anova}}
+\subsubsection{iii) Tabela ANOVA}\label{iii-tabela-anova}}
+
+Finalmente, montamos a tabela de ANOVA do modelo. Em contraposição ao
+modelo anterior, sem interações, vemos que uma pequena parcela da soma
+de quadrados é atribuída aos resíduos. De fato, o coeficiente associado
+ao efeito puro do tratamento B ainda explica muito pouco da variação do
+modelo. No entanto, para que possamos considerar a interação Idade
+\(\times\) Tratamento B, que testa significativamente para
+\(H_a: \beta_j \neq 0\), mantemos o efeito puro.
 
 \begin{longtable}[t]{lccccl}
 \caption{Tabela ANOVA para o modelo linear com interações}\\
@@ -554,6 +578,10 @@ Residuals & 30 & 462.148 & 15.405 & NA & NA\\*
 \hypertarget{iv-anuxe1lise-completa-dos-resuxedduos-do-modelo}{%
 \subsubsection{iv) Análise completa dos resíduos do
 modelo}\label{iv-anuxe1lise-completa-dos-resuxedduos-do-modelo}}
+
+COMO?
+
+Supõe-se que \(\varepsilon_i \sim N(0, \sigma^2)\).
 
 \hypertarget{apuxeandice}{%
 \section{Apêndice}\label{apuxeandice}}

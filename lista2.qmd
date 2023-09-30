@@ -23,7 +23,7 @@ execute:
 ```{r setup, include = FALSE}
 if(!("pacman" %in% installed.packages())){install.packages("pacman")}
 
-pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, stargazer)
+pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot)
 ```
 
 
@@ -90,7 +90,30 @@ head(dados)%>%
 
 ```
 
+
 ## a) Ajuste um modelo de regressão linear e interprete os resultados obtidos
+
+Inicialmente, consideremos apenas um gráfico de dispersão entre a variável resposta e a única variável numérica, Idade. É possível notar uma relação que pode ou não ser linear, mas também há indícios de heteroscedasticidade. As demais variáveis são dicotômicas, então não há necessidade de se montar dispersões para elas.
+
+Além disso, se segregamos a dispersão por grupos de tratamento, notamos que pode ser preferível um modelo que considere comportamentos de cada grupo separadamente.
+
+```{r scatter-variaveis, fig.align='center', fig.caption = "Gráficos de dispersão geral e segregado por tratamento"}
+geral <- ggplot(dados, aes(x = idade, y = eficacia))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(y = "Eficácia", x = "Idade")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+
+trat <- ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  labs(y = "Eficácia", x = "Idade")+
+  theme_bw()+
+  theme(axis.ticks = element_blank(),
+        legend.position = "none")
+
+plot_grid(geral, trat)
+```
 
 Temos um potencial modelo de regressão linear que pode ou não conter interações entre as variáveis, o qual pode ser expresso em sua forma saturada, em que $X_1$ é a variável idade e $X_2$ a variável tratamento
 
@@ -179,8 +202,7 @@ Nota-se que a maioria da variância explicada pelo modelo está associada à var
 Se conjugarmos os resultados deste item com os do item a) vemos que isoladamente apenas idade, e interessantemente apenas o tratamento A, parecem ser variáveis que realmente contribuem para a explicação do fenômeno. 
 
 ## c) Considere a possibilidade de incluir a interação entre as varáveis independentes
-
-Supõe-se que $\varepsilon_i \sim N(0, \sigma^2)$. 
+ 
 
 ### i) Lista de todos os submodelos possíveis 
 
@@ -315,9 +337,9 @@ Enquanto este coeficiente, do grupo de referência, é positivo e muito próximo
 Em termos reais, o modelo sugere que há uma grande influência da idade sobre a eficácia do tratamento C, enquanto essa influência é menor para o tratamento B e menor ainda para o tratamento A.
 
 
-### iii) tabela ANOVA
+### iii) Tabela ANOVA
 
-descrever tabela anova
+Finalmente, montamos a tabela de ANOVA do modelo. Em contraposição ao modelo anterior, sem interações, vemos que uma pequena parcela da soma de quadrados é atribuída aos resíduos. De fato, o coeficiente associado ao efeito puro do tratamento B ainda explica muito pouco da variação do modelo. No entanto, para que possamos considerar a interação Idade $\times$ Tratamento B, que testa significativamente para $H_a: \beta_j \neq 0$, mantemos o efeito puro.
 
 ```{r anova-modelo-interacoes}
 anova(fit_depressao_intera) %>%
@@ -342,7 +364,9 @@ anova(fit_depressao_intera) %>%
 
 ### iv) Análise completa dos resíduos do modelo
 
+COMO?
 
+Supõe-se que $\varepsilon_i \sim N(0, \sigma^2)$.
 
 # Apêndice
 
