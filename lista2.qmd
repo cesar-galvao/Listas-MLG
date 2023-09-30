@@ -146,7 +146,7 @@ Ou seja, se considerarmos independentemente idade, tratamento A e tratamento B, 
 * A eficácia base para o tratamento B é de 22.75 -- mas poderíamos desconsiderar este coeficiente, se nos guiarmos pelo p-valor; 
 * Cada ano a mais de vida incrementa a eficácia em 0.644.
 
-É possível considerar que um tamanho de amostra pequeno tenha grande influência sobre a significância de $\beta_3 = 0$ do modelo. No entanto, trata-se de um fenômeno para o qual o tratamento pode estar estreitamente associado à idade, caso em que teríamos que considerar o modelo (\ref{modelo_dummy}) por completo.
+É possível considerar que um tamanho de amostra pequeno tenha grande influência sobre a significância de $H_0: \beta_3 = 0$ do modelo. No entanto, trata-se de um fenômeno para o qual o tratamento pode estar estreitamente associado à idade, caso em que teríamos que considerar o modelo (\ref{modelo_dummy}) por completo.
 
 
 ## b) Obtenha a tabela ANOVA para o modelo obtido no item (a) e interprete os resultado
