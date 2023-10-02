@@ -347,7 +347,7 @@ fit_depressao_intera %>%
 
 ```
 
-Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito mínimo dos tratamentos está bem diferente, com interceptos $C<B<A$, com uma grande diferença entre o primeiro e último tratamento.
+Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito mínimo dos tratamentos está bem diferente, com interceptos $C<B<A$ e uma grande diferença entre o primeiro e último tratamento.
 
 O efeito da interação entre idade e tratamentos pode ser melhor explicada se analisarmos graficamente primeiro. A figura a seguir ilustra as curvas de regressão para cada tratamento.
 

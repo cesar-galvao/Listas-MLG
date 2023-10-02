@@ -177,7 +177,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced, breakable, frame hidden, sharp corners]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, sharp corners, breakable, frame hidden, enhanced, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -533,8 +533,8 @@ idade:B & -0.510 & 0.110 & -4.617 & 0.000\\*
 
 Há várias mudanças na interpretação dos coeficientes estimados em
 relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito
-mínimo dos tratamentos está bem diferente, com interceptos \(C<B<A\),
-com uma grande diferença entre o primeiro e último tratamento.
+mínimo dos tratamentos está bem diferente, com interceptos \(C<B<A\) e
+uma grande diferença entre o primeiro e último tratamento.
 
 O efeito da interação entre idade e tratamentos pode ser melhor
 explicada se analisarmos graficamente primeiro. A figura a seguir
