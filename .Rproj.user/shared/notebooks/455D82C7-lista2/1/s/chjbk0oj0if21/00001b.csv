@@ -1,5 +1,6 @@
 "0","geral <- ggplot(dados, aes(x = idade, y = eficacia))+"
 "0","  geom_point(shape = 15, size = 2, alpha = .75)+"
+"0","  geom_smooth(method = ""lm"", se = FALSE)+"
 "0","  labs(y = ""Eficácia"", x = ""Idade"")+"
 "0","  theme_bw()+"
 "0","  theme(axis.ticks = element_blank())"
@@ -12,3 +13,4 @@
 "0","        legend.position = ""none"")"
 "0",""
 "0","plot_grid(geral, trat)"
+"2","[38;5;252m`geom_smooth()` using formula = 'y ~ x'[39m"

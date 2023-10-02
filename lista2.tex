@@ -177,7 +177,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, sharp corners, frame hidden, interior hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced, breakable, frame hidden, sharp corners]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -216,6 +216,8 @@ conclua.}\label{c-apresente-a-tabela-de-anuxe1lise-de-variuxe2ncia-para-testar-a
 análise de resíduos e
 conclua.}\label{d-com-base-no-modelo-obtido-no-item-anterior-fauxe7a-uma-anuxe1lise-de-resuxedduos-e-conclua.}}
 
+\newpage{}
+
 \hypertarget{questuxe3o-2}{%
 \section{Questão 2}\label{questuxe3o-2}}
 
@@ -253,6 +255,31 @@ eficacia & idade & tratamento\\
 \cellcolor{gray!15}{55} & \cellcolor{gray!15}{28} & \cellcolor{gray!15}{A}\\
 25 & 23 & C\\*
 \end{longtable*}
+
+Um histograma da variável resposta é exibido a seguir, sugerindo
+assimetria na sua distribuição.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/histograma-q2-1.pdf}
+
+}
+
+\end{figure}
+
+No entanto, se montamos um histograma da variável resposta para cada
+valor de tratamento, vemos que há uma discrepência na sua distribuição.
+O tratamento A está bem concentrando em eficácias mais altas, enquanto o
+B está mais concentrado ao centro da métrica de eficácia e o C está
+amplamente distribuído.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/histograma-q2-facet-1.pdf}
+
+}
+
+\end{figure}
 
 \hypertarget{a-ajuste-um-modelo-de-regressuxe3o-linear-e-interprete-os-resultados-obtidos}{%
 \subsection{a) Ajuste um modelo de regressão linear e interprete os
@@ -505,9 +532,9 @@ idade:B & -0.510 & 0.110 & -4.617 & 0.000\\*
 \end{longtable}
 
 Há várias mudanças na interpretação dos coeficientes estimados em
-relação ao primeiro modelo ajustado. Primeiramente, vemos que a linha de
-base dos tratamentos está bem diferente com efeitos \(C<B<A\), com uma
-grande diferença entre o primeiro e último tratamento.
+relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito
+mínimo dos tratamentos está bem diferente, com interceptos \(C<B<A\),
+com uma grande diferença entre o primeiro e último tratamento.
 
 O efeito da interação entre idade e tratamentos pode ser melhor
 explicada se analisarmos graficamente primeiro. A figura a seguir
@@ -528,14 +555,23 @@ força a interpretação de que o intercepto \(\beta_0\) do modelo é o seu
 efeito de tratamento isolado e \(\beta_1 \, x_{1i}\) se refere à
 interação entre o tratamento C e a variável idade.
 
-Enquanto este coeficiente, do grupo de referência, é positivo e muito
-próximo a \(1\), os demais são negativos. No entanto, isto não significa
-que suas retas têm coeficiente angular negativo. O sentido e magnitude
-desses estimadores indica quanto a inclinação das demais retas está
-deslocada no sentido horário em relação à referência. Pela tabela,
-notamos que \(\beta_1 > \beta_4 > \beta_5\). Analogamente, se
-\(\theta_j, j = A, B, C\) for o ângulo da curva de regressão em relação
-às abscissas, notamos que \(\theta_C > \theta_B > \theta_A\).
+Podemos expressar entao o modelo ajustado da seguinte forma:
+
+\begin{align}
+   \hat{y}_i &= \hat{\beta_0} + \hat{\beta_1} \, x_{1i} + \hat{\beta_2} \, x_{Ai} + \hat{\beta_3} \, x_{Bi} + \hat{\beta_4} \, x_{1i} \, x_{Ai} +\hat{\beta_5} \, x_{1i} \, x_{Bi} \nonumber \\
+   \nonumber \\
+   &= \begin{cases}
+        \hat{\beta_0} + \hat{\beta_1} \, x_{1i}, \text{ se tratamento C} \\
+        (\hat{\beta}_0 + \hat{\beta}_2) + (\hat{\beta}_1 + \hat{\beta}_4) x_{1i},  \text{ se tratamento A} \\
+        (\hat{\beta}_0 + \hat{\beta}_3) + (\hat{\beta}_1 + \hat{\beta}_5) x_{1i},  \text{ se tratamento B}
+      \end{cases} \nonumber \\
+      \nonumber \\
+  &= \begin{cases}
+        6.21 + 1.03 \, x_{1i}, \text{ se tratamento C} \\
+        47.51 + 0.33 \,  x_{1i},  \text{ se tratamento A} \\
+        28.91 + 0.53 \,  x_{1i},  \text{ se tratamento B}
+  \end{cases}\label{modelo_decomposto}
+\end{align}
 
 Em termos reais, o modelo sugere que há uma grande influência da idade
 sobre a eficácia do tratamento C, enquanto essa influência é menor para

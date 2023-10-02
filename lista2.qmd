@@ -63,6 +63,9 @@ as análises).
 #       stripe_color = "gray!15")
 ```
 
+
+{{< pagebreak >}}
+
 # Questão 2
 
 Uma equipe de pesquisadores de saúde mental deseja comparar três métodos de tratamento da depressão grave (A, B e C=referência). Eles também gostariam de estudara relação entre idade e eficácia do tratamento, bem como a interação (se houver) entre idade e tratamento. Cada elemento da amostra aleatória simples de 36 pacientes, foi selecionado aleatoriamente para receber o tratamento A, B ou C. Os dados obtidos podem ser encontrados no ficheiro `Q02-data.txt`. A variável dependente $y$ é a eficácia do tratamento; as variáveis independentes são: a idade do paciente no aniversário mais próximo e o tipo de tratamento administrado (use 1% de significância durantes as análises).
@@ -89,6 +92,34 @@ head(dados)%>%
       stripe_color = "gray!15")
 
 ```
+
+Um histograma da variável resposta é exibido a seguir, sugerindo assimetria na sua distribuição.
+
+```{r histograma-q2,fig.align='center', fig.caption = "Histograma da variável resposta", fig.height = 3}
+dados %>%
+  ggplot(aes(eficacia))+
+  geom_histogram(color = "black", fill = "gray", bins = 10)+
+  scale_y_continuous(limits = c(0, 9),
+                     expand = expansion(mult = 0, add = 0))+
+  labs(x = "Eficácia", y = "")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+```
+
+No entanto, se montamos um histograma da variável resposta para cada valor de tratamento, vemos que há uma discrepência na sua distribuição. O tratamento A está bem concentrando em eficácias mais altas, enquanto o B está mais concentrado ao centro da métrica de eficácia e o C está amplamente distribuído.
+
+```{r histograma-q2-facet,fig.align='center', fig.caption = "Histograma da variável resposta segregado por tratamento", fig.height = 2.5}
+dados %>%
+  ggplot(aes(eficacia, fill = tratamento))+
+  geom_histogram(bins = 10, color = "black")+
+  scale_y_continuous(limits = c(0, 5),
+                     expand = expansion(mult = 0, add = 0))+
+  labs(x = "Eficácia", y = "", fill = "Tratamento")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())+
+  facet_wrap(~tratamento)
+```
+
 
 
 ## a) Ajuste um modelo de regressão linear e interprete os resultados obtidos
@@ -316,7 +347,7 @@ fit_depressao_intera %>%
 
 ```
 
-Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que a linha de base dos tratamentos está bem diferente  com efeitos $C<B<A$, com uma grande diferença entre o primeiro e último tratamento.
+Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito mínimo dos tratamentos está bem diferente, com interceptos $C<B<A$, com uma grande diferença entre o primeiro e último tratamento.
 
 O efeito da interação entre idade e tratamentos pode ser melhor explicada se analisarmos graficamente primeiro. A figura a seguir ilustra as curvas de regressão para cada tratamento.
 
@@ -332,7 +363,23 @@ ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
 
 Cabe recapitularmos que o grupo de referência é o tratamento C, o que força a interpretação de que o intercepto $\beta_0$ do modelo é o seu efeito de tratamento isolado e $\beta_1 \, x_{1i}$ se refere à interação entre o tratamento C e a variável idade. 
 
-Enquanto este coeficiente, do grupo de referência, é positivo e muito próximo a $1$, os demais são negativos. No entanto, isto não significa que suas retas têm coeficiente angular negativo. O sentido e magnitude desses estimadores indica quanto a inclinação das demais retas está deslocada no sentido horário em relação à referência. Pela tabela, notamos que $\beta_1 > \beta_4 > \beta_5$. Analogamente, se $\theta_j, j = A, B, C$ for o ângulo da curva de regressão em relação às abscissas, notamos que $\theta_C > \theta_B > \theta_A$.
+Podemos expressar entao o modelo ajustado da seguinte forma:
+
+\begin{align}
+   \hat{y}_i &= \hat{\beta_0} + \hat{\beta_1} \, x_{1i} + \hat{\beta_2} \, x_{Ai} + \hat{\beta_3} \, x_{Bi} + \hat{\beta_4} \, x_{1i} \, x_{Ai} +\hat{\beta_5} \, x_{1i} \, x_{Bi} \nonumber \\
+   \nonumber \\
+   &= \begin{cases}
+        \hat{\beta_0} + \hat{\beta_1} \, x_{1i}, \text{ se tratamento C} \\
+        (\hat{\beta}_0 + \hat{\beta}_2) + (\hat{\beta}_1 + \hat{\beta}_4) x_{1i},  \text{ se tratamento A} \\
+        (\hat{\beta}_0 + \hat{\beta}_3) + (\hat{\beta}_1 + \hat{\beta}_5) x_{1i},  \text{ se tratamento B}
+      \end{cases} \nonumber \\
+      \nonumber \\
+  &= \begin{cases}
+        6.21 + 1.03 \, x_{1i}, \text{ se tratamento C} \\
+        47.51 + 0.33 \,  x_{1i},  \text{ se tratamento A} \\
+        28.91 + 0.53 \,  x_{1i},  \text{ se tratamento B}
+  \end{cases}\label{modelo_decomposto}
+\end{align}
 
 Em termos reais, o modelo sugere que há uma grande influência da idade sobre a eficácia do tratamento C, enquanto essa influência é menor para o tratamento B e menor ainda para o tratamento A.
 
