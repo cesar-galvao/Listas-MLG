@@ -52,6 +52,46 @@
   \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -177,12 +217,12 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, interior hidden, sharp corners, breakable, frame hidden, enhanced, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, breakable, sharp corners, frame hidden, interior hidden, enhanced]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
 \hypersetup{linkcolor=}
-\setcounter{tocdepth}{2}
+\setcounter{tocdepth}{3}
 \tableofcontents
 }
 \newpage{}
@@ -265,6 +305,8 @@ assimetria na sua distribuição.
 
 }
 
+\caption{Histograma da variável resposta}
+
 \end{figure}
 
 No entanto, se montamos um histograma da variável resposta para cada
@@ -278,6 +320,8 @@ amplamente distribuído.
 {\centering \includegraphics{lista2_files/figure-pdf/histograma-q2-facet-1.pdf}
 
 }
+
+\caption{Histograma da variável resposta segregado por tratamento}
 
 \end{figure}
 
@@ -301,6 +345,8 @@ grupo separadamente.
 {\centering \includegraphics{lista2_files/figure-pdf/scatter-variaveis-1.pdf}
 
 }
+
+\caption{Gráficos de dispersão geral e segregado por tratamento}
 
 \end{figure}
 
@@ -442,7 +488,7 @@ interação, temos \(\sum\limits_{n = 1}^5\binom{6}{n} = 62\) modelos
   \item $y_i = \beta_2 \, x_{Ai} + \beta_4 \, x_{1i} \, x_{Ai} + \varepsilon_i$
   \item $y_i = \beta_2 \, x_{Ai} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   \item $y_i = \beta_3 \, x_{Bi} + \beta_4 \, x_{1i} \, x_{Ai} + \varepsilon_i$
-  \item $y_i = \beta_3 \, x_{Bi} \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
+  \item $y_i = \beta_3 \, x_{Bi} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   \item $y_i = \beta_4 \, x_{1i} \, x_{Ai} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   
   
@@ -505,7 +551,7 @@ interação}\label{ii-interpretauxe7uxe3o-de-coeficientes-de-regressuxe3o-de-fat
 
 Agora experimentamos ajustar exatamente o modelo (\ref{modelo_dummy}) e,
 conforme suspeitas, verificamos que não apenas agora o coeficiente
-\(\beta_3\), correspondente ao tratamento B, é significativamente
+\(\beta_3\), correspondente ao tratamento B puro, é significativamente
 diferente de zero, como a interação dos tratamentos também o é.
 
 \begin{longtable}[t]{lcccc}
@@ -529,6 +575,35 @@ idade & 1.033 & 0.072 & 14.288 & 0.000\\
 B & 22.707 & 5.091 & 4.460 & 0.000\\
 \cellcolor{gray!15}{idade:A} & \cellcolor{gray!15}{-0.703} & \cellcolor{gray!15}{0.109} & \cellcolor{gray!15}{-6.451} & \cellcolor{gray!15}{0.000}\\
 idade:B & -0.510 & 0.110 & -4.617 & 0.000\\*
+\end{longtable}
+
+Se avaliarmos os estimadores por intervalos de confianca a 95\% de
+significância, apenas o intercepto compreende zero. De fato, dada a
+magnitude do intervalo, isto é consonante com o p-valor obtido para este
+estimador, de 0.07. Este valor está um pouco acima da significância
+sugerida, mas decide-se por mantê-lo por interpretabilidade do modelo.
+
+\begin{longtable}[t]{lcc}
+\caption{Intervalos de confiança para estimadores dos coeficientes de regressão}\\
+\toprule
+Estimador & LI(2.5\%) & LS(97.5\%)\\
+\midrule
+\endfirsthead
+\caption[]{Intervalos de confiança para estimadores dos coeficientes de regressão \textit{(continued)}}\\
+\toprule
+Estimador & LI(2.5\%) & LS(97.5\%)\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-0.630} & \cellcolor{gray!15}{13.052}\\
+idade & 0.886 & 1.181\\
+\cellcolor{gray!15}{A} & \cellcolor{gray!15}{30.920} & \cellcolor{gray!15}{51.688}\\
+B & 12.310 & 33.104\\
+\cellcolor{gray!15}{idade:A} & \cellcolor{gray!15}{-0.925} & \cellcolor{gray!15}{-0.480}\\
+idade:B & -0.735 & -0.284\\*
 \end{longtable}
 
 Há várias mudanças na interpretação dos coeficientes estimados em
@@ -555,7 +630,7 @@ força a interpretação de que o intercepto \(\beta_0\) do modelo é o seu
 efeito de tratamento isolado e \(\beta_1 \, x_{1i}\) se refere à
 interação entre o tratamento C e a variável idade.
 
-Podemos expressar entao o modelo ajustado da seguinte forma:
+Podemos expressar então o modelo ajustado da seguinte forma:
 
 \begin{align}
    \hat{y}_i &= \hat{\beta_0} + \hat{\beta_1} \, x_{1i} + \hat{\beta_2} \, x_{Ai} + \hat{\beta_3} \, x_{Bi} + \hat{\beta_4} \, x_{1i} \, x_{Ai} +\hat{\beta_5} \, x_{1i} \, x_{Bi} \nonumber \\
@@ -615,15 +690,172 @@ Residuals & 30 & 462.148 & 15.405 & NA & NA\\*
 \subsubsection{iv) Análise completa dos resíduos do
 modelo}\label{iv-anuxe1lise-completa-dos-resuxedduos-do-modelo}}
 
-COMO?
+Iniciamos a análise dos resíduos do modelo, supondo-se que
+\(\varepsilon_i \sim N(0, \sigma^2)\), com testes de hipótese para
+normalidade, heteroscedasticidade e independência dos dados. Avaliando
+apenas os p-valores dos testes, não rejeitamos as hipóteses nulas e
+podemos considerar a normalidade dos resíduos, constância da variância e
+independência dos dados.
 
-Supõe-se que \(\varepsilon_i \sim N(0, \sigma^2)\).
+\begin{longtable}[t]{lcc}
+\caption{Testes de hipótese para normalidade, heteroscedasticidade e independência.}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Testes de hipótese para normalidade, heteroscedasticidade e independência. \textit{(continued)}}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.963} & \cellcolor{gray!15}{0.263}\\
+studentized Breusch-Pagan test & 2.996 & 0.701\\
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.633} & \cellcolor{gray!15}{0.284}\\*
+\end{longtable}
+
+Se analisarmos graficamente, notamos que os resíduos parecem
+uniformemente distribuídos em torno de zero e com caudas mais pesadas no
+QQplot. Isto favorece a hipótese de não normalidade, mas contradiz os
+resultados do teste realizado. Verificaremos isso mais adiante.
+
+Além disso, se avaliamos o gráfico de resíduos por sua alavancagem,
+vemos que há alguns pontos com distância de Cook muito próxima a dois.
+De fato, se utilizamos a função \texttt{stats::influence.measures()}
+encontramos 4 pontos de alavancagem por algum dos critérios
+apresentados. No entanto, nenhum deles está discrepante em ambos os
+eixos, de modo que podemos considerá-los bons pontos de alavancagem.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-2-1.pdf}
+
+}
+
+\end{figure}
+
+Por fim, investigamos um pouco melhor os resíduos studentizados, gerando
+um evenlopamento por bootstrap paramétrico\footnote{\url{https://github.com/cesar-galvao/modelos_lineares/blob/main/envelope_function.R}}.
+De fato há pontos na borda da região designada como intervalo de
+confiança. No entanto, considerando a distância deles ao intervalo e os
+resultados dos demais testes, mantemos a afirmação de normalidade dos
+resíduos e não são propostos mais ajustes ao modelo.
+
+\includegraphics{lista2_files/figure-pdf/unnamed-chunk-3-1.pdf}
 
 \hypertarget{apuxeandice}{%
 \section{Apêndice}\label{apuxeandice}}
 
 Todo o projeto de composição deste documento pode ser encontrado aqui:
 \url{https://github.com/cesar-galvao/mlg}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\NormalTok{(}\StringTok{"pacman"} \SpecialCharTok{\%in\%} \FunctionTok{installed.packages}\NormalTok{()))\{}\FunctionTok{install.packages}\NormalTok{(}\StringTok{"pacman"}\NormalTok{)\}}
+
+\NormalTok{pacman}\SpecialCharTok{::}\FunctionTok{p\_load}\NormalTok{(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot)}
+
+
+\NormalTok{dados }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\StringTok{"dados lista 2/Q02\_data.txt"}\NormalTok{, }\AttributeTok{header=}\NormalTok{T)}
+
+\NormalTok{dados }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(eficacia))}\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{, }\AttributeTok{fill =} \StringTok{"gray"}\NormalTok{, }\AttributeTok{bins =} \DecValTok{10}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{9}\NormalTok{),}
+                     \AttributeTok{expand =} \FunctionTok{expansion}\NormalTok{(}\AttributeTok{mult =} \DecValTok{0}\NormalTok{, }\AttributeTok{add =} \DecValTok{0}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Eficácia"}\NormalTok{, }\AttributeTok{y =} \StringTok{""}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{())}
+
+\NormalTok{dados }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(eficacia, }\AttributeTok{fill =}\NormalTok{ tratamento))}\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{10}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{5}\NormalTok{),}
+                     \AttributeTok{expand =} \FunctionTok{expansion}\NormalTok{(}\AttributeTok{mult =} \DecValTok{0}\NormalTok{, }\AttributeTok{add =} \DecValTok{0}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Eficácia"}\NormalTok{, }\AttributeTok{y =} \StringTok{""}\NormalTok{, }\AttributeTok{fill =} \StringTok{"Tratamento"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{())}\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{tratamento)}
+
+\NormalTok{geral }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dados, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ idade, }\AttributeTok{y =}\NormalTok{ eficacia))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{shape =} \DecValTok{15}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{75}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Eficácia"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Idade"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{())}
+
+\NormalTok{trat }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dados, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ idade, }\AttributeTok{y =}\NormalTok{ eficacia, }\AttributeTok{color =}\NormalTok{ tratamento))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{shape =} \DecValTok{15}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{75}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Eficácia"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Idade"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{(),}
+        \AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+
+\FunctionTok{plot\_grid}\NormalTok{(geral, trat)}
+
+\CommentTok{\#da encoding à variavel tratamento}
+\NormalTok{dados\_dummy }\OtherTok{\textless{}{-}}\NormalTok{ dados }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{A =} \FunctionTok{if\_else}\NormalTok{(tratamento }\SpecialCharTok{==} \StringTok{"A"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+         \AttributeTok{B =} \FunctionTok{if\_else}\NormalTok{(tratamento }\SpecialCharTok{==} \StringTok{"B"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{tratamento)}
+
+\CommentTok{\#monta fit aditivo do modelo}
+\NormalTok{fit\_depressao }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(eficacia }\SpecialCharTok{\textasciitilde{}}\NormalTok{ (.), }\AttributeTok{data =}\NormalTok{ dados\_dummy)}
+
+\CommentTok{\#tabela do modelo}
+\NormalTok{fit\_depressao }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summary}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{()}
+
+\FunctionTok{anova}\NormalTok{(fit\_depressao) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{tidy}\NormalTok{()}
+
+\NormalTok{fit\_depressao\_intera }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(eficacia }\SpecialCharTok{\textasciitilde{}}\NormalTok{ (.) }\SpecialCharTok{+}\NormalTok{ idade}\SpecialCharTok{*}\NormalTok{A }\SpecialCharTok{+}\NormalTok{ idade}\SpecialCharTok{*}\NormalTok{B, }\AttributeTok{data =}\NormalTok{ dados\_dummy)}
+
+\NormalTok{fit\_depressao\_intera }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summary}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{tidy}\NormalTok{()}
+
+\NormalTok{nomes }\OtherTok{\textless{}{-}} \FunctionTok{row.names}\NormalTok{(}\FunctionTok{confint}\NormalTok{(fit\_depressao\_intera, }\AttributeTok{level=}\FloatTok{0.95}\NormalTok{))}
+
+\NormalTok{tabela }\OtherTok{\textless{}{-}} \FunctionTok{confint}\NormalTok{(fit\_depressao\_intera, }\AttributeTok{level=}\FloatTok{0.95}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{as\_tibble}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Estimador =}\NormalTok{ nomes) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Estimador, }\FunctionTok{everything}\NormalTok{()) }
+
+\FunctionTok{ggplot}\NormalTok{(dados, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ idade, }\AttributeTok{y =}\NormalTok{ eficacia, }\AttributeTok{color =}\NormalTok{ tratamento))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{shape =} \DecValTok{15}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{75}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Eficácia"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Idade"}\NormalTok{, }\AttributeTok{color =} \StringTok{"Tratamento"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_bw}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.ticks =} \FunctionTok{element\_blank}\NormalTok{())}
+
+\FunctionTok{anova}\NormalTok{(fit\_depressao\_intera) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{tidy}\NormalTok{()}
+
+\FunctionTok{bind\_rows}\NormalTok{(}
+  \DocumentationTok{\#\# Perform the normal Shapiro{-}Wilk test for the residuals}
+  \FunctionTok{shapiro.test}\NormalTok{(}\FunctionTok{residuals}\NormalTok{(fit\_depressao\_intera)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tidy}\NormalTok{(),}
+  
+  \DocumentationTok{\#\# Perform breush{-}pagan test for hetereocedascity}
+\NormalTok{  (}\FunctionTok{bptest}\NormalTok{(fit\_depressao\_intera) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tidy}\NormalTok{())[, }\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{)],}
+  
+  \DocumentationTok{\#\# Perform Durbin{-}Watson test for Independence}
+\NormalTok{  (}\FunctionTok{durbinWatsonTest}\NormalTok{(fit\_depressao\_intera) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tidy}\NormalTok{())[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{)]}
+\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(method, }\FunctionTok{everything}\NormalTok{())}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(fit\_depressao\_intera)}
+
+\FunctionTok{source}\NormalTok{(}\StringTok{"dados lista 2/envelope\_function.R"}\NormalTok{)}
+\FunctionTok{envelope\_LR}\NormalTok{(fit\_depressao\_intera, }\AttributeTok{OLS =}\NormalTok{ T, }\AttributeTok{main.title =} \StringTok{"Resíduos com envelope"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 
 
 

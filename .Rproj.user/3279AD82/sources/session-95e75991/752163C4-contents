@@ -7,7 +7,7 @@ author:
 format: 
   pdf:
     toc: true
-    toc-depth: 2
+    toc-depth: 3
     keep-tex: true
     include-in-header:
       text: |
@@ -26,12 +26,9 @@ if(!("pacman" %in% installed.packages())){install.packages("pacman")}
 pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot)
 ```
 
-
 # Questão 1
 
-Considere os dados sobre a qualidade do vinho tinto, apresentados no ficheiro `Q01-data.txt`. Ajuste o modelo de regressão linear múltipla, e faça uma análise completa
-desses dados. Que conclusões você tira dessa análise? (use 5% de significância durantes
-as análises).
+Considere os dados sobre a qualidade do vinho tinto, apresentados no ficheiro `Q01-data.txt`. Ajuste o modelo de regressão linear múltipla, e faça uma análise completa desses dados. Que conclusões você tira dessa análise? (use 5% de significância durantes as análises).
 
 ## a) Proponha algum método para resolver o problema da multicolinearidade no conjunto de dados
 
@@ -40,8 +37,6 @@ as análises).
 ## c) Apresente a tabela de Análise de Variância para testar a significância global dos coeficientes do modelo final. Apresente as hipóteses de teste e conclua.
 
 ## d) Com base no modelo obtido no item anterior, faça uma análise de resíduos e conclua.
-
-
 
 ```{r EXEMPLO-TABELA}
 # kpss.test(E) %>% 
@@ -62,7 +57,6 @@ as análises).
 #       latex_options = c("striped", "repeat_header"),
 #       stripe_color = "gray!15")
 ```
-
 
 {{< pagebreak >}}
 
@@ -95,7 +89,7 @@ head(dados)%>%
 
 Um histograma da variável resposta é exibido a seguir, sugerindo assimetria na sua distribuição.
 
-```{r histograma-q2,fig.align='center', fig.caption = "Histograma da variável resposta", fig.height = 3}
+```{r histograma-q2,fig.align='center', fig.cap = "Histograma da variável resposta", fig.height = 3}
 dados %>%
   ggplot(aes(eficacia))+
   geom_histogram(color = "black", fill = "gray", bins = 10)+
@@ -108,7 +102,7 @@ dados %>%
 
 No entanto, se montamos um histograma da variável resposta para cada valor de tratamento, vemos que há uma discrepência na sua distribuição. O tratamento A está bem concentrando em eficácias mais altas, enquanto o B está mais concentrado ao centro da métrica de eficácia e o C está amplamente distribuído.
 
-```{r histograma-q2-facet,fig.align='center', fig.caption = "Histograma da variável resposta segregado por tratamento", fig.height = 2.5}
+```{r histograma-q2-facet,fig.align='center', fig.cap = "Histograma da variável resposta segregado por tratamento", fig.height = 2.5}
 dados %>%
   ggplot(aes(eficacia, fill = tratamento))+
   geom_histogram(bins = 10, color = "black")+
@@ -120,15 +114,13 @@ dados %>%
   facet_wrap(~tratamento)
 ```
 
-
-
 ## a) Ajuste um modelo de regressão linear e interprete os resultados obtidos
 
 Inicialmente, consideremos apenas um gráfico de dispersão entre a variável resposta e a única variável numérica, Idade. É possível notar uma relação que pode ou não ser linear, mas também há indícios de heteroscedasticidade. As demais variáveis são dicotômicas, então não há necessidade de se montar dispersões para elas.
 
 Além disso, se segregamos a dispersão por grupos de tratamento, notamos que pode ser preferível um modelo que considere comportamentos de cada grupo separadamente.
 
-```{r scatter-variaveis, fig.align='center', fig.caption = "Gráficos de dispersão geral e segregado por tratamento"}
+```{r scatter-variaveis, fig.align='center', fig.cap = "Gráficos de dispersão geral e segregado por tratamento"}
 geral <- ggplot(dados, aes(x = idade, y = eficacia))+
   geom_point(shape = 15, size = 2, alpha = .75)+
   geom_smooth(method = "lm", se = FALSE)+
@@ -148,18 +140,18 @@ plot_grid(geral, trat)
 
 Temos um potencial modelo de regressão linear que pode ou não conter interações entre as variáveis, o qual pode ser expresso em sua forma saturada, em que $X_1$ é a variável idade e $X_2$ a variável tratamento
 
-
+```{=tex}
 \begin{align}
   y_i = \beta_0 + \beta_1 \, x_{1i} + \beta_2 \, x_{2i} + \beta_3 \, x_{1i}\, x_{2i} + \varepsilon_i, \quad i = 1, 2, \dots, n
 \end{align}
-
+```
 ou, de forma análoga, desmembrando $X_2$ em variáveis *dummy* $X_A$ e $X_B$, indicadores da presença do tratamento $A$ e $B$, ambas assumindo valor $0$ quando se trata do tratamento $C$
 
-
+```{=tex}
 \begin{align}
   y_i = \beta_0 + \beta_1 \, x_{1i} + \beta_2 \, x_{Ai} + \beta_3 \, x_{Bi} + \beta_4 \, x_{1i} \, x_{Ai} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i. \label{modelo_dummy}
 \end{align}
-
+```
 Se simplesmente ajustamos um modelo de regressão linear -- sem os termos de interação -- utilizando (\ref{modelo_dummy}) como referência na função `lm()`, obtemos os seguintes resultados:
 
 ```{r ajuste-modelo2}
@@ -193,16 +185,14 @@ fit_depressao %>%
       stripe_color = "gray!15")
 ```
 
-
 Ou seja, se considerarmos independentemente idade, tratamento A e tratamento B, podemos considerar que:
 
-* Há uma linha de base na eficácia de aproximadamente 22.3, i.e. sob o tratamento C;
-* A eficácia base para o tratamento A é de 32.3;
-* A eficácia base para o tratamento B é de 22.75 -- mas poderíamos desconsiderar este coeficiente, se nos guiarmos pelo p-valor; 
-* Cada ano a mais de vida incrementa a eficácia em 0.644.
+-   Há uma linha de base na eficácia de aproximadamente 22.3, i.e. sob o tratamento C;
+-   A eficácia base para o tratamento A é de 32.3;
+-   A eficácia base para o tratamento B é de 22.75 -- mas poderíamos desconsiderar este coeficiente, se nos guiarmos pelo p-valor;
+-   Cada ano a mais de vida incrementa a eficácia em 0.644.
 
 É possível considerar que um tamanho de amostra pequeno tenha grande influência sobre a significância de $H_0: \beta_3 = 0$ do modelo. No entanto, trata-se de um fenômeno para o qual o tratamento pode estar estreitamente associado à idade, caso em que teríamos que considerar o modelo (\ref{modelo_dummy}) por completo.
-
 
 ## b) Obtenha a tabela ANOVA para o modelo obtido no item (a) e interprete os resultados
 
@@ -230,15 +220,15 @@ anova(fit_depressao) %>%
 
 Nota-se que a maioria da variância explicada pelo modelo está associada à variável idade, enquanto a soma de quadrados das variáveis de tratamento juntas não superam a soma de quadrados dos resíduos.
 
-Se conjugarmos os resultados deste item com os do item a) vemos que isoladamente apenas idade, e interessantemente apenas o tratamento A, parecem ser variáveis que realmente contribuem para a explicação do fenômeno. 
+Se conjugarmos os resultados deste item com os do item a) vemos que isoladamente apenas idade, e interessantemente apenas o tratamento A, parecem ser variáveis que realmente contribuem para a explicação do fenômeno.
 
 ## c) Considere a possibilidade de incluir a interação entre as varáveis independentes
- 
 
-### i) Lista de todos os submodelos possíveis 
+### i) Lista de todos os submodelos possíveis
 
 A partir do modelo (\ref{modelo_dummy}), construimos todos os possíveis submodelos. Considerando que temos três covariáveis e dois termos de interação, temos $\sum\limits_{n = 1}^5\binom{6}{n} = 62$ modelos
 
+```{=tex}
 \begin{enumerate}
   \item $y_i = \beta_0 + \varepsilon_i$
   \item $y_i = \beta_1 \, x_{1i} + \varepsilon_i$
@@ -261,7 +251,7 @@ A partir do modelo (\ref{modelo_dummy}), construimos todos os possíveis submode
   \item $y_i = \beta_2 \, x_{Ai} + \beta_4 \, x_{1i} \, x_{Ai} + \varepsilon_i$
   \item $y_i = \beta_2 \, x_{Ai} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   \item $y_i = \beta_3 \, x_{Bi} + \beta_4 \, x_{1i} \, x_{Ai} + \varepsilon_i$
-  \item $y_i = \beta_3 \, x_{Bi} \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
+  \item $y_i = \beta_3 \, x_{Bi} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   \item $y_i = \beta_4 \, x_{1i} \, x_{Ai} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   
   
@@ -316,10 +306,10 @@ A partir do modelo (\ref{modelo_dummy}), construimos todos os possíveis submode
   \item $y_i = \beta_0 + \beta_1 \, x_{1i} + \beta_2 \, x_{Ai} + \beta_3 \, x_{Bi} + \beta_5 \, x_{1i} \, x_{Bi} + \varepsilon_i$
   \item $y_i = \beta_0 + \beta_1 \, x_{1i} + \beta_2 \, x_{Ai} + \beta_3 \, x_{Bi} + \beta_4 \, x_{1i} \, x_{Ai} + \varepsilon_i$
 \end{enumerate}
-
+```
 ### ii) Interpretação de coeficientes de regressão de fatores de interação
 
-Agora experimentamos ajustar exatamente o modelo (\ref{modelo_dummy}) e, conforme suspeitas, verificamos que não apenas agora o coeficiente $\beta_3$, correspondente ao tratamento B, é significativamente diferente de zero, como a interação dos tratamentos também o é.
+Agora experimentamos ajustar exatamente o modelo (\ref{modelo_dummy}) e, conforme suspeitas, verificamos que não apenas agora o coeficiente $\beta_3$, correspondente ao tratamento B puro, é significativamente diferente de zero, como a interação dos tratamentos também o é.
 
 ```{r modelo-interacao}
 #modelo aditivo (.) + interações específicas'
@@ -347,10 +337,38 @@ fit_depressao_intera %>%
 
 ```
 
+Se avaliarmos os estimadores por intervalos de confianca a 95% de significância, apenas o intercepto compreende zero. De fato, dada a magnitude do intervalo, isto é consonante com o p-valor obtido para este estimador, de 0.07. Este valor está um pouco acima da significância sugerida, mas decide-se por mantê-lo por interpretabilidade do modelo.
+
+```{r confint-interacoes}
+
+nomes <- row.names(confint(fit_depressao_intera, level=0.95))
+
+tabela <- confint(fit_depressao_intera, level=0.95) %>% 
+  as_tibble() %>%
+  mutate(Estimador = nomes) %>%
+  select(Estimador, everything()) 
+
+tabela %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Estimador","LI(2.5\\%)", "LS(97.5\\%)"),
+    caption = "Intervalos de confiança para estimadores dos coeficientes de regressão") %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+```
+
 Há várias mudanças na interpretação dos coeficientes estimados em relação ao primeiro modelo ajustado. Primeiramente, vemos que o efeito mínimo dos tratamentos está bem diferente, com interceptos $C<B<A$ e uma grande diferença entre o primeiro e último tratamento.
 
 O efeito da interação entre idade e tratamentos pode ser melhor explicada se analisarmos graficamente primeiro. A figura a seguir ilustra as curvas de regressão para cada tratamento.
-
 
 ```{r, fig.align='center', fig.cap= "Curvas de regressão para modelo com interações."}
 ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
@@ -361,10 +379,11 @@ ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
   theme(axis.ticks = element_blank())
 ```
 
-Cabe recapitularmos que o grupo de referência é o tratamento C, o que força a interpretação de que o intercepto $\beta_0$ do modelo é o seu efeito de tratamento isolado e $\beta_1 \, x_{1i}$ se refere à interação entre o tratamento C e a variável idade. 
+Cabe recapitularmos que o grupo de referência é o tratamento C, o que força a interpretação de que o intercepto $\beta_0$ do modelo é o seu efeito de tratamento isolado e $\beta_1 \, x_{1i}$ se refere à interação entre o tratamento C e a variável idade.
 
-Podemos expressar entao o modelo ajustado da seguinte forma:
+Podemos expressar então o modelo ajustado da seguinte forma:
 
+```{=tex}
 \begin{align}
    \hat{y}_i &= \hat{\beta_0} + \hat{\beta_1} \, x_{1i} + \hat{\beta_2} \, x_{Ai} + \hat{\beta_3} \, x_{Bi} + \hat{\beta_4} \, x_{1i} \, x_{Ai} +\hat{\beta_5} \, x_{1i} \, x_{Bi} \nonumber \\
    \nonumber \\
@@ -380,9 +399,8 @@ Podemos expressar entao o modelo ajustado da seguinte forma:
         28.91 + 0.53 \,  x_{1i},  \text{ se tratamento B}
   \end{cases}\label{modelo_decomposto}
 \end{align}
-
+```
 Em termos reais, o modelo sugere que há uma grande influência da idade sobre a eficácia do tratamento C, enquanto essa influência é menor para o tratamento B e menor ainda para o tratamento A.
-
 
 ### iii) Tabela ANOVA
 
@@ -408,12 +426,60 @@ anova(fit_depressao_intera) %>%
       stripe_color = "gray!15")
 ```
 
-
 ### iv) Análise completa dos resíduos do modelo
 
-COMO?
+Iniciamos a análise dos resíduos do modelo, supondo-se que $\varepsilon_i \sim N(0, \sigma^2)$, com testes de hipótese para normalidade, heteroscedasticidade e independência dos dados. Avaliando apenas os p-valores dos testes, não rejeitamos as hipóteses nulas e podemos considerar a normalidade dos resíduos, constância da variância e independência dos dados.
 
-Supõe-se que $\varepsilon_i \sim N(0, \sigma^2)$.
+```{r testes-hipotese}
+bind_rows(
+  ## Perform the normal Shapiro-Wilk test for the residuals
+  shapiro.test(residuals(fit_depressao_intera)) %>% tidy(),
+  
+  ## Perform breush-pagan test for hetereocedascity
+  (bptest(fit_depressao_intera) %>% tidy())[, c(1, 2, 4)],
+  
+  ## Perform Durbin-Watson test for Independence
+  (durbinWatsonTest(fit_depressao_intera) %>% tidy())[,c(1, 2, 4)]
+) %>%
+  select(method, everything()) %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Teste","Estatística de teste","p-valor"),
+    caption = "Testes de hipótese para normalidade, heteroscedasticidade e independência."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+  
+```
+
+Se analisarmos graficamente, notamos que os resíduos parecem uniformemente distribuídos em torno de zero e com caudas mais pesadas no QQplot. Isto favorece a hipótese de não normalidade, mas contradiz os resultados do teste realizado. Verificaremos isso mais adiante.
+
+Além disso, se avaliamos o gráfico de resíduos por sua alavancagem, vemos que há alguns pontos com distância de Cook muito próxima a dois. De fato, se utilizamos a função `stats::influence.measures()` encontramos 4 pontos de alavancagem por algum dos critérios apresentados. No entanto, nenhum deles está discrepante em ambos os eixos, de modo que podemos considerá-los bons pontos de alavancagem.
+
+```{r, fig.align='center', fig.width=6.5, fig.height=6.5}
+#rstudent(fit_depressao_intera) %>% plot()
+par(mfrow=c(2,2))
+plot(fit_depressao_intera)
+
+#influence.measures(fit_depressao_intera)
+```
+
+Por fim, investigamos um pouco melhor os resíduos studentizados, gerando um evenlopamento por bootstrap paramétrico[^1]. De fato há pontos na borda da região designada como intervalo de confiança. No entanto, considerando a distância deles ao intervalo e os resultados dos demais testes, mantemos a afirmação de normalidade dos resíduos e não são propostos mais ajustes ao modelo.
+
+[^1]: <https://github.com/cesar-galvao/modelos_lineares/blob/main/envelope_function.R>
+
+```{r}
+source("dados lista 2/envelope_function.R")
+envelope_LR(fit_depressao_intera, OLS = T, main.title = "Resíduos com envelope")
+```
 
 # Apêndice
 
@@ -421,12 +487,109 @@ Todo o projeto de composição deste documento pode ser encontrado aqui: <https:
 
 ```{r codigo, eval = FALSE, echo = TRUE}
 
+if(!("pacman" %in% installed.packages())){install.packages("pacman")}
 
+pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot)
+
+
+dados <- read.table("dados lista 2/Q02_data.txt", header=T)
+
+dados %>%
+  ggplot(aes(eficacia))+
+  geom_histogram(color = "black", fill = "gray", bins = 10)+
+  scale_y_continuous(limits = c(0, 9),
+                     expand = expansion(mult = 0, add = 0))+
+  labs(x = "Eficácia", y = "")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+
+dados %>%
+  ggplot(aes(eficacia, fill = tratamento))+
+  geom_histogram(bins = 10, color = "black")+
+  scale_y_continuous(limits = c(0, 5),
+                     expand = expansion(mult = 0, add = 0))+
+  labs(x = "Eficácia", y = "", fill = "Tratamento")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())+
+  facet_wrap(~tratamento)
+
+geral <- ggplot(dados, aes(x = idade, y = eficacia))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(y = "Eficácia", x = "Idade")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+
+trat <- ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  labs(y = "Eficácia", x = "Idade")+
+  theme_bw()+
+  theme(axis.ticks = element_blank(),
+        legend.position = "none")
+
+plot_grid(geral, trat)
+
+#da encoding à variavel tratamento
+dados_dummy <- dados %>%
+  mutate(A = if_else(tratamento == "A", 1, 0),
+         B = if_else(tratamento == "B", 1, 0)) %>%
+  select(-tratamento)
+
+#monta fit aditivo do modelo
+fit_depressao <- lm(eficacia ~ (.), data = dados_dummy)
+
+#tabela do modelo
+fit_depressao %>%
+  summary() %>% 
+  tidy()
+
+anova(fit_depressao) %>%
+  tidy()
+
+fit_depressao_intera <- lm(eficacia ~ (.) + idade*A + idade*B, data = dados_dummy)
+
+fit_depressao_intera %>%
+  summary() %>% 
+  tidy()
+
+nomes <- row.names(confint(fit_depressao_intera, level=0.95))
+
+tabela <- confint(fit_depressao_intera, level=0.95) %>% 
+  as_tibble() %>%
+  mutate(Estimador = nomes) %>%
+  select(Estimador, everything()) 
+
+ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
+  geom_point(shape = 15, size = 2, alpha = .75)+
+  geom_smooth(method = "lm", se = FALSE)+
+  labs(y = "Eficácia", x = "Idade", color = "Tratamento")+
+  theme_bw()+
+  theme(axis.ticks = element_blank())
+
+anova(fit_depressao_intera) %>%
+  tidy()
+
+bind_rows(
+  ## Perform the normal Shapiro-Wilk test for the residuals
+  shapiro.test(residuals(fit_depressao_intera)) %>% tidy(),
+  
+  ## Perform breush-pagan test for hetereocedascity
+  (bptest(fit_depressao_intera) %>% tidy())[, c(1, 2, 4)],
+  
+  ## Perform Durbin-Watson test for Independence
+  (durbinWatsonTest(fit_depressao_intera) %>% tidy())[,c(1, 2, 4)]
+) %>%
+  select(method, everything())
+
+par(mfrow=c(2,2))
+plot(fit_depressao_intera)
+
+source("dados lista 2/envelope_function.R")
+envelope_LR(fit_depressao_intera, OLS = T, main.title = "Resíduos com envelope")
 
 ```
 
 ```{r include = FALSE}
 rm(list = ls())
 gc()
-
 ```
