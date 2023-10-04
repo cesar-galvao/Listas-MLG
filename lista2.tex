@@ -217,7 +217,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, breakable, sharp corners, frame hidden, interior hidden, enhanced]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, boxrule=0pt, sharp corners, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable, frame hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -235,15 +235,435 @@ ficheiro \texttt{Q01-data.txt}. Ajuste o modelo de regressão linear
 múltipla, e faça uma análise completa desses dados. Que conclusões você
 tira dessa análise? (use 5\% de significância durantes as análises).
 
+Uma amostra dos dados é exibida na tabela a seguir:
+
+\begin{longtable*}{ccccccccccc}
+\toprule
+y & x1 & x2 & x3 & x4 & x5 & x6 & x7 & x8 & x9 & x10\\
+\midrule
+\endfirsthead
+\multicolumn{11}{@{}l}{\textit{(continued)}}\\
+\toprule
+y & x1 & x2 & x3 & x4 & x5 & x6 & x7 & x8 & x9 & x10\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{19.2} & \cellcolor{gray!15}{0} & \cellcolor{gray!15}{3.85} & \cellcolor{gray!15}{66} & \cellcolor{gray!15}{9.35} & \cellcolor{gray!15}{5.65} & \cellcolor{gray!15}{2.40} & \cellcolor{gray!15}{3.25} & \cellcolor{gray!15}{0.33} & \cellcolor{gray!15}{19} & \cellcolor{gray!15}{0.06}\\
+18.3 & 0 & 3.73 & 79 & 11.15 & 6.95 & 3.15 & 3.80 & 0.36 & 21 & 0.08\\
+\cellcolor{gray!15}{17.1} & \cellcolor{gray!15}{0} & \cellcolor{gray!15}{3.88} & \cellcolor{gray!15}{73} & \cellcolor{gray!15}{9.40} & \cellcolor{gray!15}{5.75} & \cellcolor{gray!15}{2.10} & \cellcolor{gray!15}{3.65} & \cellcolor{gray!15}{0.40} & \cellcolor{gray!15}{18} & \cellcolor{gray!15}{0.07}\\
+17.3 & 0 & 3.86 & 99 & 12.85 & 7.70 & 3.90 & 3.80 & 0.35 & 22 & 0.08\\
+\cellcolor{gray!15}{16.8} & \cellcolor{gray!15}{0} & \cellcolor{gray!15}{3.98} & \cellcolor{gray!15}{75} & \cellcolor{gray!15}{8.55} & \cellcolor{gray!15}{5.05} & \cellcolor{gray!15}{2.05} & \cellcolor{gray!15}{3.00} & \cellcolor{gray!15}{0.49} & \cellcolor{gray!15}{12} & \cellcolor{gray!15}{0.06}\\
+16.5 & 0 & 3.85 & 61 & 10.30 & 6.20 & 2.50 & 3.70 & 0.38 & 20 & 0.07\\*
+\end{longtable*}
+
+Cada variável do banco de dados apresenta as seguintes características:
+
+\begin{itemize}
+  \item y: classificação de qualidade (20 no maximo);
+  \item x1: variedade de vinho (0 — Cabernet Sauvignon, 1 — Shiraz);
+  \item x2: nível de pH;
+  \item x3: SO2 total (ppm);
+  \item x4: densidade de cor;
+  \item x5: cor de vinho;
+  \item x6: cor de pigmento polimérico;
+  \item x7: cor de antocianina;
+  \item x8: antocianinas totais (g/L);
+  \item x9: grau de ionização das antocianinas (porcentagem);
+  \item x10: antocianinas ionizadas (porcentagem).
+\end{itemize}
+
+\newpage{}
+
+Diante dos dados acima, para a aplicação de um modelo de regressão é
+necessário verificar os níveis de correlação entre as variáveis. Com
+isso, podemos ter uma noção de quais variáveis podem apresentar
+multicolinearidade num modelo de regressão linear múltiplo.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-3-1.pdf}
+
+}
+
+\caption{Correlograma das variáveis disponíveis}
+
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-4-1.pdf}
+
+}
+
+\caption{Correlações dois a dois das variáveis disponíveis.}
+
+\end{figure}
+
+\newpage{}
+
+Nota-se a partir dos gráficos apresentados que:
+
+\begin{itemize}
+  \item A variável x1 tem apenas correlações fracas;
+  \item A variável x2 tem apenas uma correlação negativa moderada com x3;
+  \item A variável x3 tem correlação moderada com todas as variáveis, exceto com x1;
+  \item A variável x4 tem correlação forte positiva com y, x5, x6, x7, x9, x10, além de uma correlação moderada negativa com x3;
+  \item A variável x5 tem correlação forte positiva com y, x4, x6, x7, x9, x10, além de uma correlação moderada negativa com x3;
+  \item A variável x6 tem correlação forte positiva com y, x4, x5, x7, x10, além de uma correlação moderada negativa e positiva com, respectivamente, x3 e x9;
+  \item A variável x7 tem correlação forte positiva com x4, x5, x6, x9, correlação moderada negativa e positiva com, respectivamente, x3 e y, além de uma correlação perfeita com x10;
+  \item A variável x8 tem apenas correlação moderada positiva e negativa, respectivamente, com x3 e x9;
+  \item A variável x9 tem correlação forte positiva com x4, x5, x7, x10, além de uma correlação moderada positiva com y e x6 e negativa com x3 e x8;
+  \item A variável x10 tem correlação forte positiva com x4, x5, x6, x9, correlação moderada positiva com y e negativa com x3, além de uma correlação perfeita com x7.
+\end{itemize}
+
+Independentemente das correlações, vamos aplicar um modelo de regressão
+linear múltiplo completo, com todas as variáveis, para analisar e
+modelar a relação entre a variável dependente ou resposta \(y\) e as
+variáveis independentes ou explicativas
+\(x_i \ \forall \ i = \{ 1,2,\dots,10 \}\).
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear múltipla completo, aplicado para todas as variáveis.}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear múltipla completo, aplicado para todas as variáveis. \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-12.208} & \cellcolor{gray!15}{14.612} & \cellcolor{gray!15}{-0.836} & \cellcolor{gray!15}{0.412}\\
+x1 & -0.846 & 0.586 & -1.443 & 0.162\\
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{7.418} & \cellcolor{gray!15}{3.512} & \cellcolor{gray!15}{2.112} & \cellcolor{gray!15}{0.046}\\
+x3 & 0.010 & 0.009 & 1.220 & 0.235\\
+\cellcolor{gray!15}{x4} & \cellcolor{gray!15}{-1.947} & \cellcolor{gray!15}{2.221} & \cellcolor{gray!15}{-0.877} & \cellcolor{gray!15}{0.390}\\
+x5 & 4.895 & 3.218 & 1.521 & 0.142\\
+\cellcolor{gray!15}{x6} & \cellcolor{gray!15}{-1.434} & \cellcolor{gray!15}{1.813} & \cellcolor{gray!15}{-0.791} & \cellcolor{gray!15}{0.437}\\
+x8 & -11.425 & 7.881 & -1.450 & 0.161\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{-0.108} & \cellcolor{gray!15}{0.220} & \cellcolor{gray!15}{-0.490} & \cellcolor{gray!15}{0.629}\\*
+\end{longtable}
+
+Nota-se que duas variáveis, x7 e x10, apresentam estimadores no modelo
+como \texttt{NA}. Isso contece porque há um elevado grau de correlação
+entre elas, o que atrapalha na estimação dos parâmetros de ambas com
+relação a variável resposta \(y\).
+
+Ignorando por enquanto esse fato, podemos fazer uma análise prévia dos
+resíduos desse modelo e averiguar se há alguma inconsistência. Para tal,
+faz-se uma análise gráfica dos e, posteriormente, um teste de
+normalidade dos resíduos e de autocorrelação entre os resíduos, além de
+um teste de heterocedasticidade do modelo.
+
+Analisando os gráficos a seguir, nota-se do primeiro gráfico que a linha
+está aproximadamente horizontal. Logo, tem-se linearidade no modelo. No
+segundo gráfico vê-se que os resíduos aparentam ter distribuição normal.
+Já no terceiro gráfico, aparenta-se haver homocedasticidade, pois os
+resíduos estão dispersos como retângulo. Por fim, no quarto gráfico,
+para observar outliers e pontos influentes, não aparenta possuir
+resíduos outliers pois os resíduos estão entre -3 e +3.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-6-1.pdf}
+
+}
+
+\end{figure}
+
+Considerando os testes aplicados, nota-se que não há outliers nos
+resíduos, não rejeita-se normalidade dos resíduos, não há evidências de
+que há heterocedasticidade e não rejeita-se a independência dos
+resíduos, logo, eles não apresentam autocorrelação.
+
+\begin{longtable}[t]{cccccc}
+\caption{Medidas estatísticas dos resíduos do modelo completo.}\\
+\toprule
+minimum & q1 & median & mean & q3 & maximum\\
+\midrule
+\endfirsthead
+\caption[]{Medidas estatísticas dos resíduos do modelo completo. \textit{(continued)}}\\
+\toprule
+minimum & q1 & median & mean & q3 & maximum\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{-2.02} & \cellcolor{gray!15}{-0.757} & \cellcolor{gray!15}{0.223} & \cellcolor{gray!15}{0.01} & \cellcolor{gray!15}{0.533} & \cellcolor{gray!15}{1.993}\\*
+\end{longtable}
+
+\begin{longtable}[t]{lcc}
+\caption{Testes de hipótese para normalidade, heteroscedasticidade e independência.}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Testes de hipótese para normalidade, heteroscedasticidade e independência. \textit{(continued)}}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.974} & \cellcolor{gray!15}{0.615}\\
+studentized Breusch-Pagan test & 3.036 & 0.932\\
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.973} & \cellcolor{gray!15}{0.792}\\*
+\end{longtable}
+
+Já que os resíduos aparentam seguir as características esperadas, vamos
+avaliar se há multicolinearidade no modelo, uma vez que haviam fortes
+correlações entre as variáveis.
+
+\newpage{}
+
 \hypertarget{a-proponha-algum-muxe9todo-para-resolver-o-problema-da-multicolinearidade-no-conjunto-de-dados}{%
 \subsection{a) Proponha algum método para resolver o problema da
 multicolinearidade no conjunto de
 dados}\label{a-proponha-algum-muxe9todo-para-resolver-o-problema-da-multicolinearidade-no-conjunto-de-dados}}
 
+Nota-se do tópico anterior que x7 e x10 são fortemente correlacionadas
+com outras variáveis, o que impossibilita de se estimar os parâmetros
+dessas variáveis para o modelo. Logo, podemos retirá-las e analisar
+novamente o modelo, avaliando se ainda há multicolinearidade nele por
+meio da medida VIF, calculada para cada variável.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear sem x7 e x10}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear sem x7 e x10 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-12.208} & \cellcolor{gray!15}{14.612} & \cellcolor{gray!15}{-0.836} & \cellcolor{gray!15}{0.412}\\
+x1 & -0.846 & 0.586 & -1.443 & 0.162\\
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{7.418} & \cellcolor{gray!15}{3.512} & \cellcolor{gray!15}{2.112} & \cellcolor{gray!15}{0.046}\\
+x3 & 0.010 & 0.009 & 1.220 & 0.235\\
+\cellcolor{gray!15}{x4} & \cellcolor{gray!15}{-1.947} & \cellcolor{gray!15}{2.221} & \cellcolor{gray!15}{-0.877} & \cellcolor{gray!15}{0.390}\\
+x5 & 4.895 & 3.218 & 1.521 & 0.142\\
+\cellcolor{gray!15}{x6} & \cellcolor{gray!15}{-1.434} & \cellcolor{gray!15}{1.813} & \cellcolor{gray!15}{-0.791} & \cellcolor{gray!15}{0.437}\\
+x8 & -11.425 & 7.881 & -1.450 & 0.161\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{-0.108} & \cellcolor{gray!15}{0.220} & \cellcolor{gray!15}{-0.490} & \cellcolor{gray!15}{0.629}\\*
+\end{longtable}
+
+\begin{longtable}[t]{cc}
+\caption{VIF para modelo sem x7 e x10}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endfirsthead
+\caption[]{VIF para modelo sem x7 e x10 \textit{(continued)}}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x1} & \cellcolor{gray!15}{1.971}\\
+x2 & 4.092\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{4.513}\\
+x4 & 603.519\\
+\cellcolor{gray!15}{x5} & \cellcolor{gray!15}{511.870}\\
+x6 & 33.320\\
+\cellcolor{gray!15}{x8} & \cellcolor{gray!15}{7.931}\\
+x9 & 36.171\\*
+\end{longtable}
+
+Analisando os VIFs, nota-se que apesar de se retirar x7 e x10 ainda há
+multicolinearidade no modelo. Poderíamos agora testar três métodos para
+se retirar a multicolinearidade, sem precisar retirar as variáveis:
+centrar, escalonar ou padronizar empiricamente as variáveis preditoras.
+No entanto, após testar os três métodos, percebeu-se que não mudou os
+índices de multicolinearidade. Logo, esses métodos não foram eficazes.
+Portanto, testaremos a remoção da variável de maior VIF, x4.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear sem x4, x7 e x10}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear sem x4, x7 e x10 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-8.931} & \cellcolor{gray!15}{14.057} & \cellcolor{gray!15}{-0.635} & \cellcolor{gray!15}{0.531}\\
+x1 & -1.008 & 0.553 & -1.821 & 0.081\\
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{6.267} & \cellcolor{gray!15}{3.242} & \cellcolor{gray!15}{1.933} & \cellcolor{gray!15}{0.065}\\
+x3 & 0.013 & 0.008 & 1.550 & 0.134\\
+\cellcolor{gray!15}{x5} & \cellcolor{gray!15}{2.250} & \cellcolor{gray!15}{1.115} & \cellcolor{gray!15}{2.017} & \cellcolor{gray!15}{0.055}\\
+x6 & -2.517 & 1.320 & -1.907 & 0.069\\
+\cellcolor{gray!15}{x8} & \cellcolor{gray!15}{-11.994} & \cellcolor{gray!15}{7.816} & \cellcolor{gray!15}{-1.534} & \cellcolor{gray!15}{0.138}\\
+x9 & -0.079 & 0.217 & -0.365 & 0.718\\*
+\end{longtable}
+
+\begin{longtable}[t]{cc}
+\caption{VIF para modelo sem x4, x7 e x10}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endfirsthead
+\caption[]{VIF para modelo sem x4, x7 e x10 \textit{(continued)}}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x1} & \cellcolor{gray!15}{1.775}\\
+x2 & 3.520\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{4.131}\\
+x5 & 62.068\\
+\cellcolor{gray!15}{x6} & \cellcolor{gray!15}{17.840}\\
+x8 & 7.877\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{35.369}\\*
+\end{longtable}
+
+Ainda notando-se alta multicolinearidade, podemos eliminar a variável x5
+de maior VIF, ou seja, maior grau de correlação com as demais, e
+analisar o que acontece.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear sem x4, x5, x7 e x10}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear sem x4, x5, x7 e x10 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-21.075} & \cellcolor{gray!15}{13.460} & \cellcolor{gray!15}{-1.566} & \cellcolor{gray!15}{0.130}\\
+x1 & -1.235 & 0.574 & -2.150 & 0.041\\
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{8.114} & \cellcolor{gray!15}{3.295} & \cellcolor{gray!15}{2.462} & \cellcolor{gray!15}{0.021}\\
+x3 & 0.015 & 0.009 & 1.695 & 0.102\\
+\cellcolor{gray!15}{x6} & \cellcolor{gray!15}{-0.211} & \cellcolor{gray!15}{0.700} & \cellcolor{gray!15}{-0.302} & \cellcolor{gray!15}{0.765}\\
+x8 & 1.827 & 3.987 & 0.458 & 0.651\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{0.310} & \cellcolor{gray!15}{0.105} & \cellcolor{gray!15}{2.953} & \cellcolor{gray!15}{0.007}\\*
+\end{longtable}
+
+\begin{longtable}[t]{cc}
+\caption{VIF para modelo sem x4, x5, x7 e x10}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endfirsthead
+\caption[]{VIF para modelo sem x4, x5, x7 e x10 \textit{(continued)}}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x1} & \cellcolor{gray!15}{1.702}\\
+x2 & 3.239\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{4.076}\\
+x6 & 4.463\\
+\cellcolor{gray!15}{x8} & \cellcolor{gray!15}{1.826}\\
+x9 & 7.379\\*
+\end{longtable}
+
+Agora sim foi possível eliminar a multicolinearidade e seguir para uma
+seleção do melhor modelo final.
+
 \hypertarget{b-usando-algum-muxe9todo-de-seleuxe7uxe3o-de-variuxe1veis-obtenha-o-modelo-final-para-o-conjunto-de-dados}{%
 \subsection{b) Usando algum método de seleção de variáveis, obtenha o
 modelo final para o conjunto de
 dados}\label{b-usando-algum-muxe9todo-de-seleuxe7uxe3o-de-variuxe1veis-obtenha-o-modelo-final-para-o-conjunto-de-dados}}
+
+Considerando os métodos de seleção de variáveis Forward, Bacward e
+Stepwise, pode-se selecionar o melhor modelo com base no critério de
+AIC.
+
+Pelo método de seleção de variáveis \emph{stepwise backward}, obtém-se o
+melhor modelo, com menor AIC (Critério de Informação de Akaike), no
+formato
+\(\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 \, x_{1i} + \hat{\beta}_2 \,x_{2i} + \hat{\beta}_3 \, x_{3i} + \hat{\beta}_9\,x_{9i}\),
+excluindo-se as vaiáveis x4, x5, x6, x7, x8, x10 do modelo.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear com x1, x2, x3 e x9}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear com x1, x2, x3 e x9 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-19.615} & \cellcolor{gray!15}{10.347} & \cellcolor{gray!15}{-1.896} & \cellcolor{gray!15}{0.069}\\
+x1 & -1.122 & 0.446 & -2.516 & 0.018\\
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{7.911} & \cellcolor{gray!15}{2.494} & \cellcolor{gray!15}{3.172} & \cellcolor{gray!15}{0.004}\\
+x3 & 0.014 & 0.007 & 2.118 & 0.043\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{0.280} & \cellcolor{gray!15}{0.051} & \cellcolor{gray!15}{5.488} & \cellcolor{gray!15}{0.000}\\*
+\end{longtable}
+
+\begin{longtable}[t]{cc}
+\caption{VIF para modelo linear com x1, x2, x3 e x9}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endfirsthead
+\caption[]{VIF para modelo linear com x1, x2, x3 e x9 \textit{(continued)}}\\
+\toprule
+Variável & VIF\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x1} & \cellcolor{gray!15}{1.098}\\
+x2 & 1.986\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{2.754}\\
+x9 & 1.862\\*
+\end{longtable}
+
+Com isso, seleciona-se o seguinte modelo final, com todas as variáveis
+significativas e sem multicolinearidade:
+
+\begin{align}
+  y_i = \beta_0 + \beta_1 \, x_{i1} + \beta_2 \, x_{i2} + \beta_3 \, x_{i3}\ + \beta_4 \, x_{i9} + \varepsilon_i, \quad i = 1, 2, \dots, 32.
+\end{align}
 
 \hypertarget{c-apresente-a-tabela-de-anuxe1lise-de-variuxe2ncia-para-testar-a-significuxe2ncia-global-dos-coeficientes-do-modelo-final.-apresente-as-hipuxf3teses-de-teste-e-conclua.}{%
 \subsection{c) Apresente a tabela de Análise de Variância para testar a
@@ -251,10 +671,214 @@ significância global dos coeficientes do modelo final. Apresente as
 hipóteses de teste e
 conclua.}\label{c-apresente-a-tabela-de-anuxe1lise-de-variuxe2ncia-para-testar-a-significuxe2ncia-global-dos-coeficientes-do-modelo-final.-apresente-as-hipuxf3teses-de-teste-e-conclua.}}
 
+Para testar as hipóteses
+
+\begin{align}
+  H_0: \beta_j = 0, \quad H_a: \beta_j \neq 0
+\end{align}
+
+monta-se a seguinte tabela de análise de variância:
+
+\begin{longtable}[t]{lccccl}
+\caption{Tabela ANOVA para o modelo linear com x1, x2, x2, x3 e x9}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Tabela ANOVA para o modelo linear com x1, x2, x2, x3 e x9 \textit{(continued)}}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x1} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{2.805} & \cellcolor{gray!15}{2.805} & \cellcolor{gray!15}{1.968} & \cellcolor{gray!15}{0.172}\\
+x2 & 1 & 6.745 & 6.745 & 4.732 & 0.039\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{6.223} & \cellcolor{gray!15}{6.223} & \cellcolor{gray!15}{4.365} & \cellcolor{gray!15}{0.046}\\
+x9 & 1 & 42.940 & 42.940 & 30.123 & 0.000\\
+\cellcolor{gray!15}{Residuals} & \cellcolor{gray!15}{27} & \cellcolor{gray!15}{38.488} & \cellcolor{gray!15}{1.425} & \cellcolor{gray!15}{NA} & \cellcolor{gray!15}{NA}\\*
+\end{longtable}
+
+Pode-se concluir que para um nível de significância de 0.05, a variável
+x1 não tem seu coeficiente significativamente diferente de zero para o
+modelo, o que significa que pode-se considerar a sua remoção. Isto é,
+essa variável não contribui de forma estatisticamente significativa para
+a explicação da variável \(y\). Dessa forma, analisa-se novamente a
+ANOVA.
+
+Nota-se ainda que, ao retirar x1, x3 também passa a não contribuir de
+forma estatisticamente significativa para a explicação da variável
+\(y\), apresentando coeficiente significativamente igual a 0 para um
+nível de significância de 0,05. Logo, retira-se essa variável também.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear com x2, x3 e x9}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear com x2, x3 e x9 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-16.652} & \cellcolor{gray!15}{11.215} & \cellcolor{gray!15}{-1.485} & \cellcolor{gray!15}{0.149}\\
+x2 & 7.206 & 2.704 & 2.665 & 0.013\\
+\cellcolor{gray!15}{x3} & \cellcolor{gray!15}{0.010} & \cellcolor{gray!15}{0.007} & \cellcolor{gray!15}{1.428} & \cellcolor{gray!15}{0.164}\\
+x9 & 0.244 & 0.053 & 4.571 & 0.000\\*
+\end{longtable}
+
+\begin{longtable}[t]{lccccl}
+\caption{Tabela ANOVA para o modelo linear com x2, x3 e x9}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Tabela ANOVA para o modelo linear com x2, x3 e x9 \textit{(continued)}}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{7.483} & \cellcolor{gray!15}{7.483} & \cellcolor{gray!15}{4.410} & \cellcolor{gray!15}{0.045}\\
+x3 & 1 & 6.757 & 6.757 & 3.982 & 0.056\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{35.450} & \cellcolor{gray!15}{35.450} & \cellcolor{gray!15}{20.892} & \cellcolor{gray!15}{0.000}\\
+Residuals & 28 & 47.510 & 1.697 & NA & NA\\*
+\end{longtable}
+
+Por fim, para \(\alpha = 0.05\), temos o modelo final para esses dados,
+que é
+
+\begin{align}
+  y_i = \beta_0 + \beta_1 \, x_{i2} + \beta_2 \, x_{i9} + \varepsilon_i, \quad i = 1, 2, \dots, 32,
+\end{align}
+
+obtido considerando os resultados das tabelas a seguir.
+
+\begin{longtable}[t]{lcccc}
+\caption{Modelo de regressão linear com x2 e x9}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Modelo de regressão linear com x2 e x9 \textit{(continued)}}\\
+\toprule
+Coeficiente & Estimativa & EP & Estatística t & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{(Intercept)} & \cellcolor{gray!15}{-4.660} & \cellcolor{gray!15}{7.566} & \cellcolor{gray!15}{-0.616} & \cellcolor{gray!15}{0.543}\\
+x2 & 4.507 & 1.968 & 2.291 & 0.029\\
+\cellcolor{gray!15}{x9} & \cellcolor{gray!15}{0.195} & \cellcolor{gray!15}{0.042} & \cellcolor{gray!15}{4.695} & \cellcolor{gray!15}{0.000}\\*
+\end{longtable}
+
+\begin{longtable}[t]{lccccl}
+\caption{Tabela ANOVA para o modelo linear com x2 e x9}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Tabela ANOVA para o modelo linear com x2 e x9 \textit{(continued)}}\\
+\toprule
+Fonte de Var. & g.l. & SQ & QM & F & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{x2} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{7.483} & \cellcolor{gray!15}{7.483} & \cellcolor{gray!15}{4.258} & \cellcolor{gray!15}{0.048}\\
+x9 & 1 & 38.747 & 38.747 & 22.045 & 0.000\\
+\cellcolor{gray!15}{Residuals} & \cellcolor{gray!15}{29} & \cellcolor{gray!15}{50.970} & \cellcolor{gray!15}{1.758} & \cellcolor{gray!15}{NA} & \cellcolor{gray!15}{NA}\\*
+\end{longtable}
+
 \hypertarget{d-com-base-no-modelo-obtido-no-item-anterior-fauxe7a-uma-anuxe1lise-de-resuxedduos-e-conclua.}{%
 \subsection{d) Com base no modelo obtido no item anterior, faça uma
 análise de resíduos e
 conclua.}\label{d-com-base-no-modelo-obtido-no-item-anterior-fauxe7a-uma-anuxe1lise-de-resuxedduos-e-conclua.}}
+
+Para uma análise de resíduos, fazemos uma análise gráfica e,
+posteriormente, teste de normalidade, de autocorrelação e de
+heterocedasticidade do dos resíduos.
+
+Analisando os gráficos, nota-se que estão aproximadamente distribuídos
+em torno de zero, que os resíduos apresentam ter distribuição normal,
+que aparenta-se haver homocedasticidade e que não aparenta possuir
+resíduos outliers.
+
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-17-1.pdf}
+
+}
+
+\end{figure}
+
+Confirmando as informações gráficas através dos testes, para um nível de
+significância de 0,05, nota-se que não há outliers nos resíduos, não
+rejeita-se normalidade dos resíduos, não há evidências de que há
+heterocedasticidade e não rejeita-se a independência dos resíduos, logo,
+eles não apresentam autocorrelação.
+
+\begin{longtable}[t]{lcc}
+\caption{Testes de hipótese para normalidade, heteroscedasticidade e independência.}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endfirsthead
+\caption[]{Testes de hipótese para normalidade, heteroscedasticidade e independência. \textit{(continued)}}\\
+\toprule
+Teste & Estatística de teste & p-valor\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.977} & \cellcolor{gray!15}{0.697}\\
+studentized Breusch-Pagan test & 1.067 & 0.587\\
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.421} & \cellcolor{gray!15}{0.090}\\*
+\end{longtable}
+
+\begin{longtable}[t]{lcclcc}
+\caption{Medidas descritivas dos resíduos padronizados.}\\
+\toprule
+minimum & q1 & median & mean & q3 & maximum\\
+\midrule
+\endfirsthead
+\caption[]{Medidas descritivas dos resíduos padronizados. \textit{(continued)}}\\
+\toprule
+minimum & q1 & median & mean & q3 & maximum\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{-1.773} & \cellcolor{gray!15}{-0.646} & \cellcolor{gray!15}{-0.036} & \cellcolor{gray!15}{0.005} & \cellcolor{gray!15}{0.536} & \cellcolor{gray!15}{2.176}\\*
+\end{longtable}
+
+Portanto, como os resíduos estão de acordo com as suposições esperadas,
+pode-se concluir que o modelo escolhido no item anterior como modelo
+final, com a relação entre \(y\), x2 e x9, está adequado. Fazendo uma
+análise desse modelo de regressão linear múltipla, poderia-se afirmar
+que para cada 1 unidade a mais de PH do vinho, a qualidade do vinho
+aumentaria, em média, 4.5 (t= 2.291; p-valor = 0.0294). Já para cada
+aumento de um grau de ionização das antocianinas (em porcentagem), a
+qualidade do vinho aumentaria, em média, 0.19 (t= 4.695; p-valor =
+5.91e-05).
 
 \newpage{}
 
@@ -615,9 +1239,11 @@ O efeito da interação entre idade e tratamentos pode ser melhor
 explicada se analisarmos graficamente primeiro. A figura a seguir
 ilustra as curvas de regressão para cada tratamento.
 
+\newpage{}
+
 \begin{figure}
 
-{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-1-1.pdf}
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-20-1.pdf}
 
 }
 
@@ -714,7 +1340,7 @@ Teste & Estatística de teste & p-valor\\
 \endlastfoot
 \cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.963} & \cellcolor{gray!15}{0.263}\\
 studentized Breusch-Pagan test & 2.996 & 0.701\\
-\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.633} & \cellcolor{gray!15}{0.284}\\*
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.633} & \cellcolor{gray!15}{0.214}\\*
 \end{longtable}
 
 Se analisarmos graficamente, notamos que os resíduos parecem
@@ -731,7 +1357,7 @@ eixos, de modo que podemos considerá-los bons pontos de alavancagem.
 
 \begin{figure}
 
-{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-2-1.pdf}
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-21-1.pdf}
 
 }
 
@@ -744,7 +1370,13 @@ confiança. No entanto, considerando a distância deles ao intervalo e os
 resultados dos demais testes, mantemos a afirmação de normalidade dos
 resíduos e não são propostos mais ajustes ao modelo.
 
-\includegraphics{lista2_files/figure-pdf/unnamed-chunk-3-1.pdf}
+\begin{figure}
+
+{\centering \includegraphics{lista2_files/figure-pdf/unnamed-chunk-22-1.pdf}
+
+}
+
+\end{figure}
 
 \hypertarget{apuxeandice}{%
 \section{Apêndice}\label{apuxeandice}}
@@ -800,7 +1432,7 @@ Todo o projeto de composição deste documento pode ser encontrado aqui:
 \NormalTok{dados\_dummy }\OtherTok{\textless{}{-}}\NormalTok{ dados }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{A =} \FunctionTok{if\_else}\NormalTok{(tratamento }\SpecialCharTok{==} \StringTok{"A"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
          \AttributeTok{B =} \FunctionTok{if\_else}\NormalTok{(tratamento }\SpecialCharTok{==} \StringTok{"B"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{tratamento)}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{tratamento)}
 
 \CommentTok{\#monta fit aditivo do modelo}
 \NormalTok{fit\_depressao }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(eficacia }\SpecialCharTok{\textasciitilde{}}\NormalTok{ (.), }\AttributeTok{data =}\NormalTok{ dados\_dummy)}
@@ -824,7 +1456,7 @@ Todo o projeto de composição deste documento pode ser encontrado aqui:
 \NormalTok{tabela }\OtherTok{\textless{}{-}} \FunctionTok{confint}\NormalTok{(fit\_depressao\_intera, }\AttributeTok{level=}\FloatTok{0.95}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
   \FunctionTok{as\_tibble}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
   \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Estimador =}\NormalTok{ nomes) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{select}\NormalTok{(Estimador, }\FunctionTok{everything}\NormalTok{()) }
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(Estimador, }\FunctionTok{everything}\NormalTok{()) }
 
 \FunctionTok{ggplot}\NormalTok{(dados, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ idade, }\AttributeTok{y =}\NormalTok{ eficacia, }\AttributeTok{color =}\NormalTok{ tratamento))}\SpecialCharTok{+}
   \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{shape =} \DecValTok{15}\NormalTok{, }\AttributeTok{size =} \DecValTok{2}\NormalTok{, }\AttributeTok{alpha =}\NormalTok{ .}\DecValTok{75}\NormalTok{)}\SpecialCharTok{+}
@@ -846,7 +1478,7 @@ Todo o projeto de composição deste documento pode ser encontrado aqui:
   \DocumentationTok{\#\# Perform Durbin{-}Watson test for Independence}
 \NormalTok{  (}\FunctionTok{durbinWatsonTest}\NormalTok{(fit\_depressao\_intera) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tidy}\NormalTok{())[,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{)]}
 \NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{select}\NormalTok{(method, }\FunctionTok{everything}\NormalTok{())}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{select}\NormalTok{(method, }\FunctionTok{everything}\NormalTok{())}
 
 \FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{))}
 \FunctionTok{plot}\NormalTok{(fit\_depressao\_intera)}

@@ -3,7 +3,7 @@
     "path": "~/UnB/9 semestre/MLG/Listas MLG/lista2.qmd",
     "project_path": "lista2.qmd",
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "2613746152",
     "contents": "",
     "dirty": false,
     "created": 1696024413079.0,
@@ -12,9 +12,9 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "356,17",
-        "scrollLine": "344",
-        "last_setup_crc32": "95e75991e9c94adc",
+        "cursorPosition": "689,0",
+        "scrollLine": "688",
+        "last_setup_crc32": "a6298d71d3fdf9",
         "rmdVisualMode": "false",
         "rmdVisualCollapsedChunks": "",
         "rmdVisualModeLocation": "22959:10522.240234375",
@@ -22,11 +22,11 @@
         "docOutlineVisible": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1696370815,
+    "lastKnownWriteTime": 1696449114,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1696370815982,
+    "last_content_update": 1696449114315,
     "read_only": false,
     "read_only_alternatives": []
 }

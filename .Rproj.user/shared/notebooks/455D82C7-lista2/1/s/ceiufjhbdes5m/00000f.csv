@@ -1,0 +1,4 @@
+"0","## Outliers nos resíduos
+summary(rstandard(modelo_final)) %>% tidy() #não tem valores fugindo de -3 e +3, então não tem outliers
+"
+"2","Warning: `tidy.summaryDefault()` is deprecated. Please use `skimr::skim()` instead."

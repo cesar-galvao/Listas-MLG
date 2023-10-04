@@ -23,40 +23,671 @@ execute:
 ```{r setup, include = FALSE}
 if(!("pacman" %in% installed.packages())){install.packages("pacman")}
 
-pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot)
+pacman::p_load(tidyverse, tidymodels, kableExtra, corrplot, plotrix, lmtest, psych, car, phia, cowplot, MASS, corrplot)
 ```
+
 
 # Questão 1
 
 Considere os dados sobre a qualidade do vinho tinto, apresentados no ficheiro `Q01-data.txt`. Ajuste o modelo de regressão linear múltipla, e faça uma análise completa desses dados. Que conclusões você tira dessa análise? (use 5% de significância durantes as análises).
 
-## a) Proponha algum método para resolver o problema da multicolinearidade no conjunto de dados
+Uma amostra dos dados é exibida na tabela a seguir:
 
-## b) Usando algum método de seleção de variáveis, obtenha o modelo final para o conjunto de dados
+```{r}
 
-## c) Apresente a tabela de Análise de Variância para testar a significância global dos coeficientes do modelo final. Apresente as hipóteses de teste e conclua.
+#Lendo e fazendo uma primeira observação das variáveis
+dados_qualidade_vinho <- read.table("dados lista 2/Q01_data.txt", header=T)
 
-## d) Com base no modelo obtido no item anterior, faça uma análise de resíduos e conclua.
+head(dados_qualidade_vinho)%>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 2
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 
-```{r EXEMPLO-TABELA}
-# kpss.test(E) %>% 
-#   tidy()%>%
-#   select(method, statistic, `p.value`) %>%
+```
+
+Cada variável do banco de dados apresenta as seguintes características:
+
+\begin{itemize}
+  \item y: classificação de qualidade (20 no maximo);
+  \item x1: variedade de vinho (0 — Cabernet Sauvignon, 1 — Shiraz);
+  \item x2: nível de pH;
+  \item x3: SO2 total (ppm);
+  \item x4: densidade de cor;
+  \item x5: cor de vinho;
+  \item x6: cor de pigmento polimérico;
+  \item x7: cor de antocianina;
+  \item x8: antocianinas totais (g/L);
+  \item x9: grau de ionização das antocianinas (porcentagem);
+  \item x10: antocianinas ionizadas (porcentagem).
+\end{itemize}
+
+{{< pagebreak >}}
+
+
+
+```{r, include = FALSE}
+
+# Resumo estatístico dos dados
+# 
+# summary(dados_qualidade_vinho[, 1:6])%>%
 #   knitr::kable(
 #     format = "latex",
-#     align = c("lccc"),
+#     align = c("c"),
 #     booktabs = TRUE,
 #     longtable = TRUE,
 #     linesep = "",
 #     escape = FALSE,
-#     digits = 2,
-#     col.names = c("", "Estatística", "p-valor")
+#     digits = 2
 #     ) %>%
 #   kableExtra::kable_styling(
 #       position = "center",
 #       latex_options = c("striped", "repeat_header"),
 #       stripe_color = "gray!15")
+# 
+# 
+# 
+# summary(dados_qualidade_vinho[, 7:11])%>%
+#   knitr::kable(
+#     format = "latex",
+#     align = c("c"),
+#     booktabs = TRUE,
+#     longtable = TRUE,
+#     linesep = "",
+#     escape = FALSE,
+#     digits = 2
+#     ) %>%
+#   kableExtra::kable_styling(
+#       position = "center",
+#       latex_options = c("striped", "repeat_header"),
+#       stripe_color = "gray!15")
+
 ```
+
+
+Diante dos dados acima, para a aplicação de um modelo de regressão é necessário verificar os níveis de correlação entre as variáveis. Com isso, podemos ter uma noção de quais variáveis podem apresentar multicolinearidade num modelo de regressão linear múltiplo.
+
+
+```{r, fig.height = 4, fig.align='center', fig.cap = "Correlograma das variáveis disponíveis"}
+
+#Analisando as possíveis correlações entre as variáveis
+
+#Correlação
+cor <- cor(dados_qualidade_vinho)
+
+##Visualização da correlação
+corrplot::corrplot(cor, method = "color",
+                   type = "full",
+                   order = "hclust",
+                   addCoef.col = "black",
+                   tl.srt = 50,
+                   diag = T, 
+                   number.cex = 0.7)
+
+```
+
+```{r, fig.height = 5, fig.align='center', fig.cap = "Correlações dois a dois das variáveis disponíveis."}
+
+#Analisando as possíveis correlações entre as variáveis
+
+pairs(dados_qualidade_vinho, col= "navy", gap=0.2, pch = 19)
+
+```
+
+{{< pagebreak >}}
+
+Nota-se a partir dos gráficos apresentados que:
+
+\begin{itemize}
+  \item A variável x1 tem apenas correlações fracas;
+  \item A variável x2 tem apenas uma correlação negativa moderada com x3;
+  \item A variável x3 tem correlação moderada com todas as variáveis, exceto com x1;
+  \item A variável x4 tem correlação forte positiva com y, x5, x6, x7, x9, x10, além de uma correlação moderada negativa com x3;
+  \item A variável x5 tem correlação forte positiva com y, x4, x6, x7, x9, x10, além de uma correlação moderada negativa com x3;
+  \item A variável x6 tem correlação forte positiva com y, x4, x5, x7, x10, além de uma correlação moderada negativa e positiva com, respectivamente, x3 e x9;
+  \item A variável x7 tem correlação forte positiva com x4, x5, x6, x9, correlação moderada negativa e positiva com, respectivamente, x3 e y, além de uma correlação perfeita com x10;
+  \item A variável x8 tem apenas correlação moderada positiva e negativa, respectivamente, com x3 e x9;
+  \item A variável x9 tem correlação forte positiva com x4, x5, x7, x10, além de uma correlação moderada positiva com y e x6 e negativa com x3 e x8;
+  \item A variável x10 tem correlação forte positiva com x4, x5, x6, x9, correlação moderada positiva com y e negativa com x3, além de uma correlação perfeita com x7.
+\end{itemize}
+
+Independentemente das correlações, vamos aplicar um modelo de regressão linear múltiplo completo, com todas as variáveis, para analisar e modelar  a relação entre a variável dependente ou resposta $y$ e as variáveis independentes ou explicativas $x_i \ \forall \ i =  \{ 1,2,\dots,10 \}$. 
+
+```{r}
+
+# Ajustando o Modelo de Regressão Múltipla
+modelo_reg_multi <- lm(y~., data=dados_qualidade_vinho)
+
+summary(modelo_reg_multi) %>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear múltipla completo, aplicado para todas as variáveis."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+
+
+```
+
+Nota-se que duas variáveis, x7 e x10, apresentam estimadores no modelo como `NA`. Isso contece porque há um elevado grau de correlação entre elas, o que atrapalha na estimação dos parâmetros de ambas com relação a variável resposta $y$.
+
+Ignorando por enquanto esse fato, podemos fazer uma análise prévia dos resíduos desse modelo e averiguar se há alguma inconsistência. Para tal, faz-se uma análise gráfica dos e, posteriormente, um teste de normalidade dos resíduos e de autocorrelação entre os resíduos, além de um teste de heterocedasticidade do modelo. 
+
+Analisando os gráficos a seguir, nota-se do primeiro gráfico que a linha está aproximadamente horizontal. Logo, tem-se linearidade no modelo. No segundo gráfico vê-se que os resíduos aparentam ter distribuição normal. Já no terceiro gráfico, aparenta-se haver homocedasticidade, pois os resíduos estão dispersos como retângulo. Por fim, no quarto gráfico, para observar outliers e pontos influentes, não aparenta possuir resíduos outliers pois os resíduos estão entre -3 e +3.
+
+```{r, fig.align='center', fig.width=6.5, fig.height=6.5}
+
+#Analisando os resíduos do modelo
+par(mfrow=c(2,2))
+plot(modelo_reg_multi) 
+## primeiro gráfico com linha apróx. horizontal - tem linearidade no modelo
+## resíduos talvez apróx. com dist. normais no segundo gráfico
+## terceiro gráfico observando a homocedasticidade - existe homocedasticidade, pois estão dispersos como retângulo, não triângulo
+## quarto gráfico para observar outliers e pontos influentes - resíduos entre -3 e +3 corrteo, além de não aparentar outliers
+```
+
+
+Considerando os testes aplicados, nota-se que não há outliers nos resíduos, não rejeita-se normalidade dos resíduos, não há evidências de que há heterocedasticidade e não rejeita-se a independência dos resíduos, logo, eles não apresentam autocorrelação.
+
+```{r}
+## Outliers nos resíduos
+summary(rstandard(modelo_reg_multi)) %>% #não tem valores fugindo de -3 e +3, então não tem outliers
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    caption = "Medidas estatísticas dos resíduos do modelo completo."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+```{r}
+bind_rows(
+  ## Teste de normalidade do resíduos Shapiro-Wilk
+  shapiro.test(modelo_reg_multi$residuals) %>% tidy(), 
+  #Não rejeita normalidade dos resíduos (H0)
+  
+  ## Perform breush-pagan test for hetereocedascity
+  ## Teste de heterocedasticidade breush-pagan para o modelo - só funciona se os resíduos tiverem dist. normal
+  (bptest(modelo_reg_multi) %>% tidy())[, c(1, 2, 4)],
+  #Não rejeita H0 de que não há heterocedasticidade (há homocedasticidade)
+                         # Logo, não há evidências de que há heterocedasticidade
+  
+  ## Perform Durbin-Watson test for Independence
+  ## Teste Durbin-Watson para a presença de autocorrelação nos resíduos (se são indep.) - só funciona se os resíduos tiverem dist. normal 
+  (durbinWatsonTest(modelo_reg_multi) %>% tidy())[,c(1, 2, 4)]
+) %>%
+  #Não rejeita H0 de que não há autocorrelação
+                                   # Logo, os resíduos aparentam ser independentes
+  dplyr::select(method, everything()) %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Teste","Estatística de teste","p-valor"),
+    caption = "Testes de hipótese para normalidade, heteroscedasticidade e independência."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+```
+
+
+Já que os resíduos aparentam seguir as características esperadas, vamos avaliar se há multicolinearidade no modelo, uma vez que haviam fortes correlações entre as variáveis.
+
+```{r, fig.height = 5, fig.align='center', fig.cap = "Distribuição dois a dois das variáveis disponíveis.", include = FALSE}
+# ## Analisando a ausência de Multicolinearidade no modelo
+# pairs.panels(dados_qualidade_vinho, gap=0.2) #Multicolinearidade se r > 0.9 ou 0.8
+
+```
+
+{{< pagebreak >}}
+
+## a) Proponha algum método para resolver o problema da multicolinearidade no conjunto de dados
+
+Nota-se do tópico anterior que x7 e x10 são fortemente correlacionadas com outras variáveis, o que impossibilita de se estimar os parâmetros dessas variáveis para o modelo. Logo, podemos retirá-las e analisar novamente o modelo, avaliando se ainda há multicolinearidade nele por meio da medida VIF, calculada para cada variável.
+
+```{r}
+# modelo ajustado sem x7 e x10
+modelo_reg_multi2 <- lm(y~x1+x2+x3+x4+x5+x6+x8+x9, data=dados_qualidade_vinho)
+
+summary(modelo_reg_multi2)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear sem x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+#multicolinearidade
+vif(modelo_reg_multi2) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Variável", "VIF"),
+    caption = "VIF para modelo sem x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15") # Multicolinearidade se VIF > 10 (severa) e > 5 (moderada)
+                       ## Mostra que mesmo tirando x7 e x10 que tinham correlação perfeita
+                       ## Ainda há multicolinearidade em x4, x5, x6 e x9
+```
+
+Analisando os VIFs, nota-se que apesar de se retirar x7 e x10 ainda há multicolinearidade no modelo. Poderíamos agora testar três métodos para se retirar a multicolinearidade, sem precisar retirar as variáveis: centrar, escalonar ou padronizar empiricamente as variáveis preditoras. No entanto, após testar os três métodos, percebeu-se que não mudou os índices de multicolinearidade. Logo, esses métodos não foram eficazes. Portanto, testaremos a remoção da variável de maior VIF, x4. 
+
+```{r}
+# modelo ajustado sem x7 e x10
+modelo_reg_multi2 <- lm(y~x1+x2+x3+x5+x6+x8+x9, data=dados_qualidade_vinho)
+
+summary(modelo_reg_multi2)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear sem x4, x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+#multicolinearidade
+vif(modelo_reg_multi2) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Variável", "VIF"),
+    caption = "VIF para modelo sem x4, x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+Ainda notando-se alta multicolinearidade, podemos eliminar a variável x5 de maior VIF, ou seja, maior grau de correlação com as demais, e analisar o que acontece.
+
+```{r}
+#modelo ajustado sem as outras variáveis que estão apontando multicolinearidade 
+modelo_reg_multi2 <- lm(y~x1+x2+x3+x6+x8+x9, data=dados_qualidade_vinho)
+
+summary(modelo_reg_multi2)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear sem x4, x5, x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+
+vif(modelo_reg_multi2) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Variável", "VIF"),
+    caption = "VIF para modelo sem x4, x5, x7 e x10"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15") #não há mais multicolinearidade
+
+```
+
+Agora sim foi possível eliminar a multicolinearidade e seguir para uma seleção do melhor modelo final. 
+
+
+## b) Usando algum método de seleção de variáveis, obtenha o modelo final para o conjunto de dados
+
+Considerando os métodos de seleção de variáveis Forward, Bacward e Stepwise, pode-se selecionar o melhor modelo com base no critério de AIC.
+
+Pelo método de seleção de variáveis *stepwise backward*, obtém-se o melhor modelo, com menor AIC (Critério de Informação de Akaike), no formato $\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1 \, x_{1i} + \hat{\beta}_2 \,x_{2i} + \hat{\beta}_3 \, x_{3i} + \hat{\beta}_9\,x_{9i}$, excluindo-se as vaiáveis x4, x5, x6, x7, x8, x10 do modelo.
+
+```{r stepwise, include= FALSE}
+#modelo_forward <- stepAIC(modelo_reg_multi2, direction = "forward")
+
+#modelo_backward <- stepAIC(modelo_reg_multi2, direction = "backward") 
+##seleciona o melhor modelo como y ~ x1 + x2 + x3 + x9
+
+modelo_stepwise <- stepAIC(modelo_reg_multi2, direction = "both") 
+##seleciona o melhor modelo como y ~ x1 + x2 + x3 + x9
+
+```
+
+```{r}
+
+modelo_final <- lm(y~ x1 + x2 + x3 + x9, data=dados_qualidade_vinho)
+
+summary(modelo_final)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear com x1, x2, x3 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+vif(modelo_final) %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("c"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Variável", "VIF"),
+    caption = "VIF para modelo linear com x1, x2, x3 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15") #não há mais multicolinearidade
+```
+
+
+Com isso, seleciona-se o seguinte modelo final, com todas as variáveis significativas e sem multicolinearidade:
+
+\begin{align}
+  y_i = \beta_0 + \beta_1 \, x_{i1} + \beta_2 \, x_{i2} + \beta_3 \, x_{i3}\ + \beta_4 \, x_{i9} + \varepsilon_i, \quad i = 1, 2, \dots, 32.
+\end{align}
+
+
+## c) Apresente a tabela de Análise de Variância para testar a significância global dos coeficientes do modelo final. Apresente as hipóteses de teste e conclua.
+
+Para testar as hipóteses
+
+\begin{align}
+  H_0: \beta_j = 0, \quad H_a: \beta_j \neq 0
+\end{align}
+
+monta-se a seguinte tabela de análise de variância:
+
+```{r}
+anova(modelo_final)%>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Fonte de Var.","g.l.", "SQ" , "QM", "F", "p-valor"),
+    caption = "Tabela ANOVA para o modelo linear com x1, x2, x2, x3 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+```
+
+Pode-se concluir que para um nível de significância de 0.05, a variável x1 não tem seu coeficiente significativamente diferente de zero para o modelo, o que significa que pode-se considerar a sua remoção. Isto é, essa variável não contribui de forma estatisticamente significativa para a explicação da variável $y$. Dessa forma, analisa-se novamente a ANOVA.
+
+Nota-se ainda que, ao retirar x1, x3 também passa a não contribuir de forma estatisticamente significativa para a explicação da variável $y$, apresentando coeficiente significativamente igual a 0 para um nível de significância de 0,05. Logo, retira-se essa variável também.
+
+
+```{r}
+modelo_final <- lm(y~ x2 + x3 + x9, data=dados_qualidade_vinho)
+
+summary(modelo_final)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear com x2, x3 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+anova(modelo_final)%>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Fonte de Var.","g.l.", "SQ" , "QM", "F", "p-valor"),
+    caption = "Tabela ANOVA para o modelo linear com x2, x3 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+
+Por fim, para $\alpha = 0.05$, temos o modelo final para esses dados, que é
+
+```{=tex}
+\begin{align}
+  y_i = \beta_0 + \beta_1 \, x_{i2} + \beta_2 \, x_{i9} + \varepsilon_i, \quad i = 1, 2, \dots, 32,
+\end{align}
+```
+
+obtido considerando os resultados das tabelas a seguir.
+
+```{r}
+modelo_final <- lm(y~ x2 + x9, data=dados_qualidade_vinho)
+
+summary(modelo_final)%>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Coeficiente","Estimativa", "EP" , "Estatística t", "p-valor"),
+    caption = "Modelo de regressão linear com x2 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+anova(modelo_final)%>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcccc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Fonte de Var.","g.l.", "SQ" , "QM", "F", "p-valor"),
+    caption = "Tabela ANOVA para o modelo linear com x2 e x9"
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+
+
+## d) Com base no modelo obtido no item anterior, faça uma análise de resíduos e conclua.
+
+Para uma análise de resíduos, fazemos uma análise gráfica e, posteriormente, teste de normalidade, de autocorrelação e de heterocedasticidade do dos resíduos.
+
+Analisando os gráficos, nota-se que estão aproximadamente distribuídos em torno de zero, que os resíduos apresentam ter distribuição normal, que aparenta-se haver homocedasticidade e que não aparenta possuir resíduos outliers.
+
+```{r, fig.align='center', fig.width=6.5, fig.height=6.5}
+
+#Analisando os resíduos do modelo
+par(mfrow=c(2,2))
+plot(modelo_final)
+
+```
+
+Confirmando as informações gráficas através dos testes, para um nível de significância de 0,05, nota-se que não há outliers nos  resíduos, não rejeita-se normalidade dos resíduos, não há evidências de que há heterocedasticidade e não rejeita-se a independência dos resíduos, logo, eles não apresentam autocorrelação.
+
+```{r}
+#Analisando os resíduos do modelo
+ 
+## primeiro gráfico com linha apróx. horizontal - tem linearidade no modelo
+## resíduos talvez apróx. com dist. normais no segundo gráfico
+## terceiro gráfico observando a homocedasticidade - existe homocedasticidade, pois estão dispersos como retângulo, não triângulo
+## quarto gráfico para observar outliers e pontos influentes - resíduos entre -3 e +3 corrteo, além de não aparentar outliers
+
+bind_rows(
+## Teste de normalidade do resíduos Shapiro-Wilk 
+shapiro.test(modelo_final$residuals) %>% tidy(), #Não rejeita normalidade dos resíduos (H0)
+
+## Teste de heterocedasticidade breush-pagan para o modelo - só funciona se os resíduos tiverem dist. normal
+(bptest(modelo_final) %>% tidy())[, c(1, 2, 4)], #Não rejeita H0 de que não há heterocedasticidade (há homocedasticidade)
+                         # Logo, não há evidências de que há heterocedasticidade
+
+## Teste Durbin-Watson para a presença de autocorrelação nos resíduos (se são indep.) - só funciona se os resíduos tiverem dist. normal 
+(durbinWatsonTest(modelo_final) %>% tidy())[,c(1, 2, 4)] #Não rejeita H0 de que não há autocorrelação
+                                   # Logo, os resíduos aparentam ser independentes
+) %>%
+  dplyr::select(method, everything()) %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    col.names = c("Teste","Estatística de teste","p-valor"),
+    caption = "Testes de hipótese para normalidade, heteroscedasticidade e independência."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+```
+
+```{r}
+## Outliers nos resíduos
+summary(rstandard(modelo_final)) %>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = c("lcc"),
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3,
+    caption = "Medidas descritivas dos resíduos padronizados."
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15") #não tem valores fugindo de -3 e +3, então não tem outliers
+```
+Portanto, como os resíduos estão de acordo com as suposições esperadas, pode-se concluir que o modelo escolhido no item anterior como modelo final, com a relação entre $y$, x2 e x9, está adequado. Fazendo uma análise desse modelo de regressão linear múltipla, poderia-se afirmar que para cada 1 unidade a mais de PH do vinho, a qualidade do vinho aumentaria, em média, 4.5 (t= 2.291; p-valor = 0.0294). Já para cada aumento de um grau de ionização das antocianinas (em porcentagem), a qualidade do vinho aumentaria, em média, 0.19 (t= 4.695; p-valor = 5.91e-05).
+
 
 {{< pagebreak >}}
 
@@ -89,7 +720,7 @@ head(dados)%>%
 
 Um histograma da variável resposta é exibido a seguir, sugerindo assimetria na sua distribuição.
 
-```{r histograma-q2,fig.align='center', fig.cap = "Histograma da variável resposta", fig.height = 3}
+```{r histograma-q2,fig.align='center', fig.cap = "Histograma da variável resposta", fig.height = 2, fig.width = 3.5}
 dados %>%
   ggplot(aes(eficacia))+
   geom_histogram(color = "black", fill = "gray", bins = 10)+
@@ -120,7 +751,7 @@ Inicialmente, consideremos apenas um gráfico de dispersão entre a variável re
 
 Além disso, se segregamos a dispersão por grupos de tratamento, notamos que pode ser preferível um modelo que considere comportamentos de cada grupo separadamente.
 
-```{r scatter-variaveis, fig.align='center', fig.cap = "Gráficos de dispersão geral e segregado por tratamento"}
+```{r scatter-variaveis, fig.align='center', fig.cap = "Gráficos de dispersão geral e segregado por tratamento", fig.height = 2.5}
 geral <- ggplot(dados, aes(x = idade, y = eficacia))+
   geom_point(shape = 15, size = 2, alpha = .75)+
   geom_smooth(method = "lm", se = FALSE)+
@@ -159,7 +790,7 @@ Se simplesmente ajustamos um modelo de regressão linear -- sem os termos de int
 dados_dummy <- dados %>%
   mutate(A = if_else(tratamento == "A", 1, 0),
          B = if_else(tratamento == "B", 1, 0)) %>%
-  select(-tratamento)
+  dplyr::select(-tratamento)
 
 #monta fit aditivo do modelo
 fit_depressao <- lm(eficacia ~ (.), data = dados_dummy)
@@ -346,7 +977,7 @@ nomes <- row.names(confint(fit_depressao_intera, level=0.95))
 tabela <- confint(fit_depressao_intera, level=0.95) %>% 
   as_tibble() %>%
   mutate(Estimador = nomes) %>%
-  select(Estimador, everything()) 
+  dplyr::select(Estimador, everything()) 
 
 tabela %>%
   knitr::kable(
@@ -370,7 +1001,9 @@ Há várias mudanças na interpretação dos coeficientes estimados em relação
 
 O efeito da interação entre idade e tratamentos pode ser melhor explicada se analisarmos graficamente primeiro. A figura a seguir ilustra as curvas de regressão para cada tratamento.
 
-```{r, fig.align='center', fig.cap= "Curvas de regressão para modelo com interações."}
+{{< pagebreak >}}
+
+```{r, fig.align='center', fig.cap= "Curvas de regressão para modelo com interações.", fig.width=5, fig.height=3.5}
 ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
   geom_point(shape = 15, size = 2, alpha = .75)+
   geom_smooth(method = "lm", se = FALSE)+
@@ -441,7 +1074,7 @@ bind_rows(
   ## Perform Durbin-Watson test for Independence
   (durbinWatsonTest(fit_depressao_intera) %>% tidy())[,c(1, 2, 4)]
 ) %>%
-  select(method, everything()) %>%
+  dplyr::select(method, everything()) %>%
   knitr::kable(
     format = "latex",
     align = c("lcc"),
@@ -476,7 +1109,7 @@ Por fim, investigamos um pouco melhor os resíduos studentizados, gerando um eve
 
 [^1]: <https://github.com/cesar-galvao/modelos_lineares/blob/main/envelope_function.R>
 
-```{r}
+```{r, fig.width = 5, fig.height = 4, fig.align='center'}
 source("dados lista 2/envelope_function.R")
 envelope_LR(fit_depressao_intera, OLS = T, main.title = "Resíduos com envelope")
 ```
@@ -533,7 +1166,7 @@ plot_grid(geral, trat)
 dados_dummy <- dados %>%
   mutate(A = if_else(tratamento == "A", 1, 0),
          B = if_else(tratamento == "B", 1, 0)) %>%
-  select(-tratamento)
+  dplyr::select(-tratamento)
 
 #monta fit aditivo do modelo
 fit_depressao <- lm(eficacia ~ (.), data = dados_dummy)
@@ -557,7 +1190,7 @@ nomes <- row.names(confint(fit_depressao_intera, level=0.95))
 tabela <- confint(fit_depressao_intera, level=0.95) %>% 
   as_tibble() %>%
   mutate(Estimador = nomes) %>%
-  select(Estimador, everything()) 
+  dplyr::select(Estimador, everything()) 
 
 ggplot(dados, aes(x = idade, y = eficacia, color = tratamento))+
   geom_point(shape = 15, size = 2, alpha = .75)+
@@ -579,7 +1212,7 @@ bind_rows(
   ## Perform Durbin-Watson test for Independence
   (durbinWatsonTest(fit_depressao_intera) %>% tidy())[,c(1, 2, 4)]
 ) %>%
-  select(method, everything())
+  dplyr::select(method, everything())
 
 par(mfrow=c(2,2))
 plot(fit_depressao_intera)
