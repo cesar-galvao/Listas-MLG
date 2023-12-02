@@ -1,0 +1,66 @@
+##### ref: https://www.kaggle.com/datasets/everydaycodings/multi-platform-online-courses-dataset?select=Coursera.csv
+##### Análise de cursos dados na plataforma COURSERA com relação a empresa
+##### nivel 1:  rating, review count, level
+##### Agrupamento por partner (empresa): valor de mercado da empresa (variável de grupo)
+##### variável resposta elegibilidade de crédito do curso - certificado de horas válido para faculdade
+
+
+
+######################## Leitura, tratamento e limpeza dos dados ######################
+library(read.csv)
+dados <- read.csv("Coursera.csv")
+head(dados)
+
+#Retirando variáveis que não serão usadas
+variaveis_nao_usadas <- c("skills", "duration")
+dados <- dados[,!names(dados) %in% variaveis_nao_usadas]
+colnames(dados)
+
+
+#Verificando as empresas que tem e quais as quantidades de dados
+freq_empresas <- table(dados$partner)
+freq_empresas <- freq_empresas[order(-freq_empresas)]
+print(freq_empresas)
+
+
+#Deixando apenas as empresas de interesse
+empresas_especificas <- c("Google", "IBM", "Meta", "Microsoft")
+dados_filtrados <- dados[dados$partner %in% empresas_especificas, ]
+head(dados_filtrados)
+unique(dados_filtrados$partner) #OK
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse_C
+quantidade_nas <- colSums(is.na(dados_filtrados))
+quantidade_nas <- data.frame(numero_de_NAs = quantidade_nas)
+print(quantidade_nas) 
+##Verificado que as variáveis de análise não tem NAs
+
+
+#colocando o valor de mercado de cada empresa no banco
+
+## dataframe com pares de empresa e valor de mercado
+valores_empresas <- data.frame(
+  partner = c("Google", "IBM", "Meta", "Microsoft"),
+  market_value_dolars = c(132.53, 142.03, 327.15, 327.32)
+)
+
+
+dados_interesse <- merge(dados_filtrados,
+                         valores_empresas, by = "partner", all = TRUE)
+
+colnames(dados_filtrados)
+
+
+#substituindo 0 para resposta a legibilidade False e 1 para True
+dados_filtrados$crediteligibility <- ifelse(dados_filtrados$crediteligibility == "true", 1, 0)
+table(dados_filtrados$crediteligibility) 
+
+
+
+
+
+
+######################## Modelagem dos dados ###########################
+#Modelos de Regressão Logística Multinível
+

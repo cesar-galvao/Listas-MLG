@@ -177,7 +177,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, sharp corners, breakable, frame hidden, interior hidden, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, breakable, borderline west={3pt}{0pt}{shadecolor}, frame hidden, interior hidden, boxrule=0pt, enhanced]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -378,7 +378,7 @@ Teste & Estatística de teste & p-valor\\
 \endlastfoot
 \cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.974} & \cellcolor{gray!15}{0.615}\\
 studentized Breusch-Pagan test & 3.036 & 0.932\\
-\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.973} & \cellcolor{gray!15}{0.786}\\*
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.973} & \cellcolor{gray!15}{0.834}\\*
 \end{longtable}
 
 Já que os resíduos aparentam seguir as características esperadas, vamos
@@ -809,7 +809,7 @@ Teste & Estatística de teste & p-valor\\
 \endlastfoot
 \cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.977} & \cellcolor{gray!15}{0.697}\\
 studentized Breusch-Pagan test & 1.067 & 0.587\\
-\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.421} & \cellcolor{gray!15}{0.064}\\*
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.421} & \cellcolor{gray!15}{0.076}\\*
 \end{longtable}
 
 \begin{longtable}[t]{lcclcc}
@@ -1300,7 +1300,7 @@ Teste & Estatística de teste & p-valor\\
 \endlastfoot
 \cellcolor{gray!15}{Shapiro-Wilk normality test} & \cellcolor{gray!15}{0.963} & \cellcolor{gray!15}{0.263}\\
 studentized Breusch-Pagan test & 2.996 & 0.701\\
-\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.633} & \cellcolor{gray!15}{0.248}\\*
+\cellcolor{gray!15}{Durbin-Watson Test} & \cellcolor{gray!15}{1.633} & \cellcolor{gray!15}{0.244}\\*
 \end{longtable}
 
 Se analisarmos graficamente, notamos que os resíduos parecem

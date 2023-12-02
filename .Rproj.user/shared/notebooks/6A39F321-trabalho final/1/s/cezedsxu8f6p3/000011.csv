@@ -1,0 +1,5 @@
+"0","# Lendo os dados
+dados_spss <- read_sav(""thaieduc.sav"")
+"
+"2","Erro: 'thaieduc.sav' does not exist in current working directory ('C:/Users/cesar/Documents/UnB/9 semestre/MLG/Listas MLG/trabalho_final').
+"

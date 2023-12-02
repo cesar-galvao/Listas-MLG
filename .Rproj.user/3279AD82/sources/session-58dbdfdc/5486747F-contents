@@ -1,0 +1,546 @@
+########################## Fazendo leitura dos dados com o pacote
+# ref: DataSUS
+#ref2: https://github.com/rfsaldanha/microdatasus
+#O pacote microdatasus depende do read.dbc que também removido, então
+##ref3: https://github.com/danicat/read.dbc
+
+#primeiro, instalar Rtools
+#segundo, baixar pacotes remotes e devtools
+
+# install.packages("devtools")
+devtools::install_github("danicat/read.dbc")
+
+# install.packages("remotes")
+remotes::install_github("rfsaldanha/microdatasus", force = TRUE)
+
+#carregue o pacote microdatasus
+library(microdatasus)
+
+# buscando dados
+dados_teste <- fetch_datasus(information_system = "SIM-DO",
+                             year_start = 2017,
+                             year_end = 2017)
+dados_teste <- process_sim(dados_teste, municipality_data = FALSE)
+
+# Visualize os dados
+head(dados_teste)
+
+
+
+
+
+
+
+########################## Fazendo leitura dos dados sem o pacote
+#ref: https://www.kaggle.com/datasets/psicodata/dados-de-suicdio-no-brasil-2014-a-2018
+
+dados <- read.csv("datasus_suicidio_2014_2018.csv", fileEncoding = "ISO-8859-1") #read.csv pq o separador é a virgula, se fosse ponto e virgula seria read.csv2
+head(dados)
+dados2017 <- dados[(dados$ano == 2017),]
+head(dados2017)
+nrow(dados2017)/nrow(dados)
+
+
+######################################################################
+# filtrando para o ano de interesse de 2017 e os estados do centro-oeste, com as variáveis de interesse
+estados_centro_oeste <- c("GO", "MT", "MS", "DF")
+
+dados_interesse_C <- dados[(dados$ano == 2017) & (dados$estado %in% estados_centro_oeste) ,
+                         c("ano", "estado", "CIRCOBITO", "SEXO", "RACACOR",
+                           "ESTCIV", "ESC", "ASSISTMED", "LOCOCOR")]
+head(dados_interesse_C)
+nrow(dados_interesse_C)
+
+#Vendo como cada variável de interesse está dividida
+valores_ano <- unique(dados_interesse_C$ano)
+valores_ano #filtrar 2017
+valores_estado <- unique(dados_interesse_C$estado)
+valores_estado #filtrar centro oeste
+valores_circuntacia <- unique(dados_interesse_C$CIRCOBITO) #tem espaços em branco nas observações
+#circunstancia do obito: separar em 1-suicidio; 0-outro -> a maioria é suicidio
+valores_circuntacia
+valores_sexo <- unique(dados_interesse_C$SEXO)
+valores_sexo
+valores_raca <- unique(dados_interesse_C$RACACOR)
+valores_raca #tem espaços em branco nas observações
+valores_estadocivil <- unique(dados_interesse_C$ESTCIV)
+valores_estadocivil #tem espaços em branco nas observações
+valores_escolaridade <- unique(dados_interesse_C$ESC)
+valores_escolaridade
+valores_atendmed <- unique(dados_interesse_C$ASSISTMED)
+valores_atendmed #tem espaços em branco nas observações
+valores_local <- unique(dados_interesse_C$LOCOCOR)
+valores_local
+
+#transformando espaços em branco em NAs
+dados_interesse_C <- as.data.frame(lapply(dados_interesse_C, function(col) {
+  col[col == ""] <- NA
+  return(col)
+}))
+head(dados_interesse_C)
+nrow(dados_interesse_C)
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse_C
+quantidade_nas <- colSums(is.na(dados_interesse_C))
+
+quantidade_nas <- data.frame(numero_de_NAs = quantidade_nas)
+
+print(quantidade_nas) 
+
+#como assistencia medica tem muitos NAs, vamos retirar ela da analise por não ser tão importante
+muitos_NAs <- c("ASSISTMED", "ESC")
+
+dados_interesse_C <- dados_interesse_C[,!names(dados_interesse_C) %in% muitos_NAs]
+length(dados_interesse_C)
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse_C
+quantidade_nas <- colSums(is.na(dados_interesse_C))
+
+quantidade_nas <- data.frame(numero_de_NAs = quantidade_nas)
+
+print(quantidade_nas)
+
+#Porcentagem de NAs da variavel com mais informações faltantes 
+max(quantidade_nas$numero_de_NAs)/nrow(dados_interesse_C)
+
+# Remove as linhas que contêm NAs do dataframe dados_interesse_C
+dados_interesse_C_sem_NAs <- na.omit(dados_interesse_C)
+linhas_sem_na <- nrow(dados_interesse_C_sem_NAs)
+linhas_com_na <- nrow(dados_interesse_C)
+porcentagem_perdida_C <- 1-(linhas_sem_na/linhas_com_na) #retirou-se 9,26% dos dados, pois os mesmos continham NAs
+print(porcentagem_perdida_C)
+
+#Contando quantas observações restaram por estado
+contagem_por_estado_C <- table(dados_interesse_C_sem_NAs$estado)
+print(contagem_por_estado_C)
+contagem_por_suicidio_C <- table(dados_interesse_C_sem_NAs$CIRCOBITO)
+print(contagem_por_suicidio_C)
+colunas_C <- colnames(dados_interesse_C_sem_NAs)
+print(colunas_C)
+
+
+
+
+
+
+######################################################################
+# filtrando para o ano de interesse de 2017 e os estados do nordeste, com as variáveis de interesse
+estados_nordeste <- c("MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA")
+
+dados_interesse_ND <- dados[(dados$ano == 2017) & (dados$estado %in% estados_nordeste) ,
+                         c("ano", "estado", "CIRCOBITO", "SEXO", "RACACOR",
+                           "ESTCIV", "ESC", "ASSISTMED", "LOCOCOR")]
+head(dados_interesse_ND)
+nrow(dados_interesse_ND)
+
+#Vendo como cada variável de interesse está dividida
+valores_ano <- unique(dados_interesse_ND$ano)
+valores_ano #filtrar 2017
+valores_estado <- unique(dados_interesse_ND$estado)
+valores_estado #filtrar centro oeste
+valores_circuntacia <- unique(dados_interesse_ND$CIRCOBITO) #tem espaços em branco nas observações
+#circunstancia do obito: separar em 1-suicidio; 0-outro -> a maioria é suicidio
+valores_circuntacia
+valores_sexo <- unique(dados_interesse_ND$SEXO)
+valores_sexo
+valores_raca <- unique(dados_interesse_ND$RACACOR)
+valores_raca #tem espaços em branco nas observações
+valores_estadocivil <- unique(dados_interesse_ND$ESTCIV)
+valores_estadocivil #tem espaços em branco nas observações
+valores_escolaridade <- unique(dados_interesse_ND$ESC)
+valores_escolaridade
+valores_atendmed <- unique(dados_interesse_ND$ASSISTMED)
+valores_atendmed #tem espaços em branco nas observações
+valores_local <- unique(dados_interesse_ND$LOCOCOR)
+valores_local
+
+#transformando espaços em branco em NAs
+dados_interesse_ND <- as.data.frame(lapply(dados_interesse_ND, function(col) {
+  col[col == ""] <- NA
+  return(col)
+}))
+head(dados_interesse_ND)
+nrow(dados_interesse_ND)
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas2 <- colSums(is.na(dados_interesse_ND))
+
+quantidade_nas2 <- data.frame(numero_de_NAs = quantidade_nas2)
+
+print(quantidade_nas2) 
+
+#como assistencia medica tem muitos NAs, vamos retirar ela da analise por não ser tão importante
+muitos_NAs2 <- c("ASSISTMED", "ESC")
+
+dados_interesse_ND <- dados_interesse_ND[,!names(dados_interesse_ND) %in% muitos_NAs2]
+length(dados_interesse_ND)
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas2 <- colSums(is.na(dados_interesse_ND))
+
+quantidade_nas2 <- data.frame(numero_de_NAs = quantidade_nas2)
+
+print(quantidade_nas2)
+
+#Porcentagem de NAs da variavel com mais informações faltantes 
+max(quantidade_nas2$numero_de_NAs)/nrow(dados_interesse_ND)
+
+# Remove as linhas que contêm NAs do dataframe dados_interesse
+dados_interesse_ND_sem_NAs <- na.omit(dados_interesse_ND)
+linhas_sem_na2 <- nrow(dados_interesse_ND_sem_NAs)
+linhas_com_na2 <- nrow(dados_interesse_ND)
+porcentagem_perdida_ND <- 1-(linhas_sem_na2/linhas_com_na2) #retirou-se 12,11% dos dados, pois os mesmos continham NAs
+print(porcentagem_perdida_ND)
+
+
+#Contando quantas observações restaram por estado
+contagem_por_estado_ND <- table(dados_interesse_ND_sem_NAs$estado)
+print(contagem_por_estado_ND)
+contagem_por_suicidio_ND <- table(dados_interesse_ND_sem_NAs$CIRCOBITO)
+print(contagem_por_suicidio_ND)
+colunas_ND <- colnames(dados_interesse_ND_sem_NAs)
+print(colunas_ND)
+
+
+
+
+
+######################################################################
+# filtrando para o ano de interesse de 2017 e os estados do norte, com as variáveis de interesse
+estados_norte <- c("AC", "AP", "AM", "PA", "RO", "RR", "TO")
+
+dados_interesse_N <- dados[(dados$ano == 2017) & (dados$estado %in% estados_norte) ,
+                          c("ano", "estado", "CIRCOBITO", "SEXO", "RACACOR",
+                            "ESTCIV", "ESC", "ASSISTMED", "LOCOCOR")]
+head(dados_interesse_N)
+nrow(dados_interesse_N)
+
+#Vendo como cada variável de interesse está dividida
+valores_ano <- unique(dados_interesse_N$ano)
+valores_ano #filtrar 2017
+valores_estado <- unique(dados_interesse_N$estado)
+valores_estado #filtrar centro oeste
+valores_circuntacia <- unique(dados_interesse_N$CIRCOBITO) #tem espaços em branco nas observações
+#circunstancia do obito: separar em 1-suicidio; 0-outro -> a maioria é suicidio
+valores_circuntacia
+valores_sexo <- unique(dados_interesse_N$SEXO)
+valores_sexo
+valores_raca <- unique(dados_interesse_N$RACACOR)
+valores_raca #tem espaços em branco nas observações
+valores_estadocivil <- unique(dados_interesse_N$ESTCIV)
+valores_estadocivil #tem espaços em branco nas observações
+valores_escolaridade <- unique(dados_interesse_N$ESC)
+valores_escolaridade
+valores_atendmed <- unique(dados_interesse_N$ASSISTMED)
+valores_atendmed #tem espaços em branco nas observações
+valores_local <- unique(dados_interesse_N$LOCOCOR)
+valores_local
+
+#transformando espaços em branco em NAs
+dados_interesse_N <- as.data.frame(lapply(dados_interesse_N, function(col) {
+  col[col == ""] <- NA
+  return(col)
+}))
+head(dados_interesse_N)
+nrow(dados_interesse_N)
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas3 <- colSums(is.na(dados_interesse_N))
+
+quantidade_nas3 <- data.frame(numero_de_NAs = quantidade_nas3)
+
+print(quantidade_nas3) 
+
+#como assistencia medica tem muitos NAs, vamos retirar ela da analise por não ser tão importante
+muitos_NAs3 <- c("ASSISTMED", "ESC")
+
+dados_interesse_N <- dados_interesse_N[,!names(dados_interesse_N) %in% muitos_NAs3]
+length(dados_interesse_N)
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas3 <- colSums(is.na(dados_interesse_N))
+
+quantidade_nas3 <- data.frame(numero_de_NAs = quantidade_nas3)
+
+print(quantidade_nas3)
+
+#Porcentagem de NAs da variavel com mais informações faltantes 
+max(quantidade_nas3$numero_de_NAs)/nrow(dados_interesse_N)
+
+# Remove as linhas que contêm NAs do dataframe dados_interesse
+dados_interesse_N_sem_NAs <- na.omit(dados_interesse_N)
+linhas_sem_na3 <- nrow(dados_interesse_N_sem_NAs)
+linhas_com_na3 <- nrow(dados_interesse_N)
+porcentagem_perdida_N <- 1-(linhas_sem_na3/linhas_com_na3) #retirou-se 10,77% dos dados, pois os mesmos continham NAs
+print(porcentagem_perdida_N)
+
+#Contando quantas observações restaram por estado
+contagem_por_estado_N <- table(dados_interesse_N_sem_NAs$estado)
+print(contagem_por_estado_N)
+contagem_por_suicidio_N <- table(dados_interesse_N_sem_NAs$CIRCOBITO)
+print(contagem_por_suicidio_N)
+colunas_N <- colnames(dados_interesse_N_sem_NAs)
+print(colunas_N)
+
+
+
+
+
+
+######################################################################
+# filtrando para o ano de interesse de 2017 e os estados do sudeste, com as variáveis de interesse
+estados_sudeste <- c("ES", "MG", "RJ", "SP")
+
+dados_interesse_SD <- dados[(dados$ano == 2017) & (dados$estado %in% estados_sudeste) ,
+                           c("ano", "estado", "CIRCOBITO", "SEXO", "RACACOR",
+                             "ESTCIV", "ESC", "ASSISTMED", "LOCOCOR")]
+head(dados_interesse_SD)
+nrow(dados_interesse_SD)
+
+#Vendo como cada variável de interesse está dividida
+valores_ano <- unique(dados_interesse_SD$ano)
+valores_ano #filtrar 2017
+valores_estado <- unique(dados_interesse_SD$estado)
+valores_estado #filtrar centro oeste
+valores_circuntacia <- unique(dados_interesse_SD$CIRCOBITO) #tem espaços em branco nas observações
+#circunstancia do obito: separar em 1-suicidio; 0-outro -> a maioria é suicidio
+valores_circuntacia
+valores_sexo <- unique(dados_interesse_SD$SEXO)
+valores_sexo
+valores_raca <- unique(dados_interesse_SD$RACACOR)
+valores_raca #tem espaços em branco nas observações
+valores_estadocivil <- unique(dados_interesse_SD$ESTCIV)
+valores_estadocivil #tem espaços em branco nas observações
+valores_escolaridade <- unique(dados_interesse_SD$ESC)
+valores_escolaridade
+valores_atendmed <- unique(dados_interesse_SD$ASSISTMED)
+valores_atendmed #tem espaços em branco nas observações
+valores_local <- unique(dados_interesse_SD$LOCOCOR)
+valores_local
+
+#transformando espaços em branco em NAs
+dados_interesse_SD <- as.data.frame(lapply(dados_interesse_SD, function(col) {
+  col[col == ""] <- NA
+  return(col)
+}))
+head(dados_interesse_SD)
+nrow(dados_interesse_SD)
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas4 <- colSums(is.na(dados_interesse_SD))
+
+quantidade_nas4 <- data.frame(numero_de_NAs = quantidade_nas4)
+
+print(quantidade_nas4) 
+
+#como assistencia medica tem muitos NAs, vamos retirar ela da analise por não ser tão importante
+muitos_NAs4 <- c("ASSISTMED", "ESC")
+
+dados_interesse_SD <- dados_interesse_SD[,!names(dados_interesse_SD) %in% muitos_NAs4]
+length(dados_interesse_SD)
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas4 <- colSums(is.na(dados_interesse_SD))
+
+quantidade_nas4 <- data.frame(numero_de_NAs = quantidade_nas4)
+
+print(quantidade_nas4)
+
+#Porcentagem de NAs da variavel com mais informações faltantes 
+max(quantidade_nas4$numero_de_NAs)/nrow(dados_interesse_SD)
+
+# Remove as linhas que contêm NAs do dataframe dados_interesse
+dados_interesse_SD_sem_NAs <- na.omit(dados_interesse_SD)
+linhas_sem_na4 <- nrow(dados_interesse_SD_sem_NAs)
+linhas_com_na4 <- nrow(dados_interesse_SD)
+porcentagem_perdida_SD <- 1-(linhas_sem_na4/linhas_com_na4) #retirou-se 14,5% dos dados, pois os mesmos continham NAs
+print(porcentagem_perdida_SD)
+
+
+#Contando quantas observações restaram por estado
+contagem_por_estado_SD <- table(dados_interesse_SD_sem_NAs$estado)
+print(contagem_por_estado_SD)
+contagem_por_suicidio_SD <- table(dados_interesse_SD_sem_NAs$CIRCOBITO)
+print(contagem_por_suicidio_SD)
+colunas_SD <- colnames(dados_interesse_SD_sem_NAs)
+print(colunas_SD)
+
+
+
+
+######################################################################
+# filtrando para o ano de interesse de 2017 e os estados do sul, com as variáveis de interesse
+estados_sul <- c("PR", "SC", "RS")
+
+dados_interesse_S <- dados[(dados$ano == 2017) & (dados$estado %in% estados_sul) ,
+                            c("ano", "estado", "CIRCOBITO", "SEXO", "RACACOR",
+                              "ESTCIV", "ESC", "ASSISTMED", "LOCOCOR", "idade")]
+head(dados_interesse_S)
+nrow(dados_interesse_S)
+
+#Vendo como cada variável de interesse está dividida
+valores_ano <- unique(dados_interesse_S$ano)
+valores_ano #filtrar 2017
+valores_estado <- unique(dados_interesse_S$estado)
+valores_estado #filtrar centro oeste
+valores_circuntacia <- unique(dados_interesse_S$CIRCOBITO) #tem espaços em branco nas observações
+#circunstancia do obito: separar em 1-suicidio; 0-outro -> a maioria é suicidio
+valores_circuntacia
+valores_sexo <- unique(dados_interesse_S$SEXO)
+valores_sexo
+valores_raca <- unique(dados_interesse_S$RACACOR)
+valores_raca #tem espaços em branco nas observações
+valores_estadocivil <- unique(dados_interesse_S$ESTCIV)
+valores_estadocivil #tem espaços em branco nas observações
+valores_escolaridade <- unique(dados_interesse_S$ESC)
+valores_escolaridade
+valores_atendmed <- unique(dados_interesse_S$ASSISTMED)
+valores_atendmed #tem espaços em branco nas observações
+valores_local <- unique(dados_interesse_S$LOCOCOR)
+valores_local
+valores_idade <- unique(dados_interesse_S$idade)
+valores_idade
+
+#transformando espaços em branco em NAs
+dados_interesse_S <- as.data.frame(lapply(dados_interesse_S, function(col) {
+  col[col == ""] <- NA
+  return(col)
+}))
+head(dados_interesse_S)
+nrow(dados_interesse_S)
+
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas5 <- colSums(is.na(dados_interesse_S))
+
+quantidade_nas5 <- data.frame(numero_de_NAs = quantidade_nas5)
+
+print(quantidade_nas5) 
+
+#como assistencia medica tem muitos NAs, vamos retirar ela da analise por não ser tão importante
+muitos_NAs5 <- c("ASSISTMED", "ESC")
+
+dados_interesse_S <- dados_interesse_S[,!names(dados_interesse_S) %in% muitos_NAs5]
+length(dados_interesse_S)
+
+# Conta o número de NAs em cada variável do dataframe dados_interesse
+quantidade_nas5 <- colSums(is.na(dados_interesse_S))
+
+quantidade_nas5 <- data.frame(numero_de_NAs = quantidade_nas5)
+
+print(quantidade_nas5)
+
+#Porcentagem de NAs da variavel com mais informações faltantes 
+max(quantidade_nas5$numero_de_NAs)/nrow(dados_interesse_S)
+
+# Remove as linhas que contêm NAs do dataframe dados_interesse
+dados_interesse_S_sem_NAs <- na.omit(dados_interesse_S)
+linhas_sem_na5 <- nrow(dados_interesse_S_sem_NAs)
+linhas_com_na5 <- nrow(dados_interesse_S)
+porcentagem_perdida_S <- 1-(linhas_sem_na5/linhas_com_na5) #retirou-se 9,23% dos dados, pois os mesmos continham NAs
+print(porcentagem_perdida_S)
+
+
+#Contando quantas observações restaram por estado
+contagem_por_estado_S <- table(dados_interesse_S_sem_NAs$estado)
+print(contagem_por_estado_S)
+contagem_por_suicidio_S <- table(dados_interesse_S_sem_NAs$CIRCOBITO)
+print(contagem_por_suicidio_S)
+colunas_S <- colnames(dados_interesse_S_sem_NAs)
+print(colunas_S)
+
+
+
+
+############################ RESUMO POR ESTADO APÓS TRATAMENTO DE DADOS
+pocentagem_perdida <- data.frame(CO = porcentagem_perdida_C, N = porcentagem_perdida_N,
+                                 ND = porcentagem_perdida_ND, S = porcentagem_perdida_S,
+                                 SD = porcentagem_perdida_SD)
+print(pocentagem_perdida)
+
+
+contagem_por_estado <- list(CO = contagem_por_estado_C, N = contagem_por_estado_N,
+                                 ND = contagem_por_estado_ND, S = contagem_por_estado_S,
+                                 SD = contagem_por_estado_SD)
+print(contagem_por_estado)
+
+
+contagem_por_suicidio <- list(CO = contagem_por_suicidio_C, N = contagem_por_suicidio_N,
+                            ND = contagem_por_suicidio_ND, S = contagem_por_suicidio_S,
+                            SD = contagem_por_suicidio_SD)
+print(contagem_por_suicidio)
+
+tamanho_dados_com_NAs <- data.frame(CO = nrow(dados_interesse_C), N = nrow(dados_interesse_N),
+                            ND = nrow(dados_interesse_ND), S = nrow(dados_interesse_S),
+                            SD = nrow(dados_interesse_SD))
+print(tamanho_dados_com_NAs)
+
+tamanho_dados_sem_NAs <- data.frame(CO = nrow(dados_interesse_C_sem_NAs), N = nrow(dados_interesse_N_sem_NAs),
+                                    ND = nrow(dados_interesse_ND_sem_NAs), S = nrow(dados_interesse_S_sem_NAs),
+                                    SD = nrow(dados_interesse_SD_sem_NAs))
+print(tamanho_dados_sem_NAs)
+
+
+
+
+############################### PARTINDO PARA MODELAGEM HIERÁRQUICA AGRUPADA POR ESTADO
+
+#retirando efetivamente os NAs
+
+
+
+#colocando o indice gini de cada estado do Sul
+
+##dataframe com pares de estados e índices Gini
+indices_gini <- data.frame(
+  estado = c("PR", "SC", "RS"),
+  GINI = c(0.485, 0.429, 0.486)
+)
+
+
+dados_interesse_S_sem_NAs <- merge(dados_interesse_S_sem_NAs,
+                           indices_gini, by = "estado", all = TRUE)
+
+colnames(dados_interesse_S_sem_NAs)
+
+dados_interesse_S_2017 <- dados_interesse_S_sem_NAs[, !names(dados_interesse_S_sem_NAs) %in% c("ano")]
+
+colnames(dados_interesse_S_2017)
+
+#substituindo "dados_interesse_S_2017" em suicidio para 1 e em não suicidio para 0
+dados_interesse_S_2017$CIRCOBITO <- ifelse(dados_interesse_S_2017$CIRCOBITO == "Suicídio", 1, 0)
+table(dados_interesse_S_2017$CIRCOBITO) 
+
+
+
+#Análise de modelos hierárquicos de um nível 
+
+# Instalar o pacote lme4 se ainda não tiver instalado
+# install.packages("lme4")
+# Instalar o pacote Matrix se ainda não tiver instalado, lme4 depende dele
+# install.packages("Matrix")
+# install.packages("lme4", dependencies = TRUE)
+
+library(Matrix)
+library(lme4)
+
+# Ajustando um modelo linear misto
+suicidio_hierarchical_lmm <- lmer(CIRCOBITO ~ SEXO + RACACOR + ESTCIV + LOCOCOR + idade + GINI + (1 | estado), data = dados_interesse_S_2017)
+
+# Exiba os resultados do modelo
+summary(suicidio_hierarchical_lmm)
+#vcov(suicidio_hierarchical_lmm) Correlation matrix
+
+# Valor crítico para um teste bicaudal com n - p graus de liberdade e alfa = 0.05
+n <- 2605  # número de observações
+p <- 15    # número de preditores
+
+valor_critico <- qt(1 - 0.05/2, df = n - p)
+print(valor_critico)
+
+  
+  
