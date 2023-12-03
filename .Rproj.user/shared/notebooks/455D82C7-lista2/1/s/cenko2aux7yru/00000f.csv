@@ -1,5 +1,0 @@
-"0","#multicolinearidade
-vif(modelo_reg_multi2) %>% tidy()
-"
-"2","Warning: 'tidy.numeric' é obsoleto.
-Veja help(""Deprecated"")"

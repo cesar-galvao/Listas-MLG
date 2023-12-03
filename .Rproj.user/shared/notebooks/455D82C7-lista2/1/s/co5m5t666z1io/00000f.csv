@@ -1,8 +1,0 @@
-"0","dados %>%"
-"0","  ggplot(aes(eficacia))+"
-"0","  geom_histogram(color = ""black"", fill = ""gray"", bins = 10)+"
-"0","  scale_y_continuous(limits = c(0, 9),"
-"0","                     expand = expansion(mult = 0, add = 0))+"
-"0","  labs(x = ""Eficácia"", y = """")+"
-"0","  theme_bw()+"
-"0","  theme(axis.ticks = element_blank())"

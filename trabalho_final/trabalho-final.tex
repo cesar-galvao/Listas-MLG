@@ -177,7 +177,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[enhanced, borderline west={3pt}{0pt}{shadecolor}, interior hidden, frame hidden, boxrule=0pt, sharp corners, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, frame hidden, borderline west={3pt}{0pt}{shadecolor}, boxrule=0pt, enhanced, breakable, sharp corners]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -318,7 +318,7 @@ nível da hierarquia, entre agrupamentos. Essa medida é chamada de
 correlação intraclasse e é dada por
 
 \begin{align}
-  \rho = \frac{\sigma^2_{u_0}}{\sigma^2_{u_0}+\sigma^2_{\varepsilon}+u_{1j}}.
+  \rho = \frac{\sigma^2_{u_0}}{\sigma^2_{u_0}+\sigma^2_{\varepsilon}+\sigma^2_{u_1}}.
 \end{align}
 
 No caso do modelo linear generalizado, especificamente o logístico, o
@@ -578,7 +578,7 @@ para meninos. Em contrapartida, quando PPED aumenta em uma unidade, para
 as outras variáveis iguais a 0 (ou seja, quando muda de ``não'' para
 ``sim'', teve educação pré primaria), a log-odds de repetição diminui em
 0.64189 vezes, pois é negativo, logo, a chance de repetir é
-\(e^-0.64189\) vezes a de não repetir para quem teve educação pré
+\(e^{-0.64189}\) vezes a de não repetir para quem teve educação pré
 primária.
 
 \hypertarget{modelo-hieruxe1rquico-com-efeitos-aleatuxf3rios-misto}{%
