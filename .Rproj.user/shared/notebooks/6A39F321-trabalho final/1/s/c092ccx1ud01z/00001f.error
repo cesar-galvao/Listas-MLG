@@ -1,0 +1,1 @@
+{"frames":[{"func":"summarize_model(modelo_efeitos_aleatorios)","file":"","line_number":0,"end_line_number":0,"character_number":0,"end_character_number":0}],"message":"Error in model_output$triphasicCI : \n  $ operator not defined for this S4 class\n"}

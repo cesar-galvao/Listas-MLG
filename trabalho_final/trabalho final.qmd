@@ -257,10 +257,40 @@ Por fim, para esse modelo adicionamos a variável preditora do nível da escola,
 
 ```{r, echo = FALSE}
 ## step 3 - adicionando a variável explicativa de nível superior com a variável correlacionada
-modelo_efeitos_aleatorios <- glmer(REPEAT ~ SEX + PPED + (1 + MSESC | SCHOOLID), 
+modelo_efeitos_aleatorios <- glmer(REPEAT ~ SEX + PPED + (1 +  SEX + PPED +MSESC | SCHOOLID), 
                                       data = dados_spss,
                                       family = binomial)
 summary(modelo_efeitos_aleatorios)
+
+ranef(modelo_efeitos_aleatorios)$SCHOOLID %>% head(5)
+coef(modelo_efeitos_aleatorios)$SCHOOLID %>% head(5)
+# mixedup::extract_random_effects(modelo_efeitos_aleatorios)
+merTools::plotREsim(merTools::REsim(modelo_efeitos_aleatorios))
+
+# logit <- function(x){1/(1+exp(-x))}
+# predict(modelo_efeitos_aleatorios, re.form=NA) %>% logit() %>% sort() %>% plot()
+# predict(modelo_efeitos_aleatorios)%>% logit() %>% sort() %>% plot()
+# 
+# sjPlot::plot_model(modelo_efeitos_aleatorios, type = "pred")
+
+library(plotly)
+
+dados_spss %>%
+  modelr::add_predictions(modelo_efeitos_aleatorios, var = 'mixed') %>%
+  group_by(SCHOOLID) %>%
+  plot_ly %>%
+  add_lines(
+    x =  ~ REPEAT,
+    y =  ~ MSESC,
+    opacity = .2,
+    color = I('#00aaff'),
+    size = I(1),
+    name = 'Mixed\nModel'
+  ) 
+
+library(ushr)
+summarize_model(modelo_efeitos_aleatorios)
+
 ```
 
 Assim, a análise fica análoga a do modelo anterior com relação a PPED, SEX e o intercepto, a diferença é que agora, como MSESC está imbutido em SCHOOLID (MSESC) dos efeitos aleatórios, ela indica que há uma variância de 1.154 entre as escolas com relação ao MSESC.

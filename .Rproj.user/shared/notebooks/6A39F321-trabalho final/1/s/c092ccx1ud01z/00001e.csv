@@ -1,0 +1,5 @@
+"0","summarize_model(modelo_efeitos_aleatorios)
+"
+"2","Error in model_output$triphasicCI : 
+  $ operator not defined for this S4 class
+"
